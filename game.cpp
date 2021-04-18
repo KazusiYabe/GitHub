@@ -19,17 +19,21 @@
 //########## グローバル変数 ##########
 
 //シーン切り替え時で使用
-int fadeTimeMill = 500;	//行うミリ秒
+int fadeTimeMill = 2000;	//行うミリ秒
+int fadeTimeMax = (fadeTimeMill / 1000) * GAME_FPS;	//フレーム数に変換
 
 //フェードアウト
-int fadeOutCntInit = (fadeTimeMill / fadeTimeMill) * GAME_FPS;	//フレーム数に変換
+int fadeOutCntInit = 0;
 int fadeOutCnt = fadeOutCntInit;
-int fadeOutCntMAX = 0;
+int fadeOutCntMAX = fadeTimeMax;
 
 //フェードイン
-int fadeInCntInit = 0;
+int fadeInCntInit = fadeTimeMax;
 int fadeInCnt = fadeInCntInit;
-int fadeInCntMAX = (fadeTimeMill / fadeTimeMill) * GAME_FPS;	//フレーム数に変換
+int fadeInCntMAX = 0;
+
+//スライムに勝ったか？
+BOOL IsSlimeWin = FALSE;
 
 //########## ゲーム処理の関数 ##########
 
@@ -54,6 +58,8 @@ VOID MY_TITLE_PROC(VOID)
 	//エンターキーでシーン遷移
 	if (MY_KEY_CLICK(KEY_INPUT_RETURN) == TRUE) 
 	{
+		IsSlimeWin = FALSE;	//スライム勝敗初期化
+
 		GameScene = GAME_SCENE_PLAY;	//プレイ画面へ
 		IsFadeIn = FALSE;				//フェードインはしない！
 		IsFadeOut = TRUE;				//フェードアウト開始！
@@ -67,7 +73,11 @@ VOID MY_TITLE_PROC(VOID)
 //タイトル画面の描画
 VOID MY_TITLE_DRAW(VOID)
 {
-	
+	//タイトル背景を描画
+	DrawImage(titleBackImage);
+
+	//ロゴを描画
+	DrawImage(titleLogo);
 
 	DrawString(0, 0, "タイトル画面", GetColor(255, 255, 255));
 	return;
@@ -107,6 +117,16 @@ VOID MY_PLAY_PROC(VOID)
 //プレイ画面の描画
 VOID MY_PLAY_DRAW(VOID)
 {
+	//プレイ背景を描画（場所は選べる４タイプ！）
+	//草　原 ：playkusaImage
+	//ﾀﾞﾝｼﾞｮﾝ：playdanjonImage
+	//川　岸 ：playkawaImage
+	//ボス戦 ：playbossImage
+	DrawImage(playkusaImage);
+
+	//スライムを描画
+	DrawImage(slimeImage);
+
 	DrawString(0, 0, "プレイ画面", GetColor(255, 255, 255));
 	return;
 }
@@ -123,8 +143,16 @@ VOID MY_END(VOID)
 //エンド画面の処理
 VOID MY_END_PROC(VOID)
 {
-	//流すBGMが違うとき
-	if (NowPlayBGM.handle != EndClearBGM.handle) { NowPlayBGM = EndClearBGM; }
+	if (IsSlimeWin == TRUE)
+	{
+		//流すBGMが違うとき
+		if (NowPlayBGM.handle != EndClearBGM.handle) { NowPlayBGM = EndClearBGM; }
+	}
+	else
+	{
+		//流すBGMが違うとき
+		if (NowPlayBGM.handle != EndOverBGM.handle) { NowPlayBGM = EndOverBGM; }
+	}
 
 	//フェードインしながら再生
 	FadeInPlayAudio(&NowPlayBGM, 1000);
@@ -145,6 +173,22 @@ VOID MY_END_PROC(VOID)
 //エンド画面の描画
 VOID MY_END_DRAW(VOID)
 {
+	if (IsSlimeWin == TRUE)
+	{
+		//背景を描画
+		DrawImage(endClearImage);
+
+		//ロゴを描画
+		DrawImage(endClearLogo);
+	}
+	else
+	{
+		//背景を描画
+		DrawImage(endOverImage);
+
+		//ロゴを描画
+		DrawImage(endOverLogo);
+	}
 
 	DrawString(0, 0, "エンド画面", GetColor(255, 255, 255));
 	return;
@@ -164,17 +208,15 @@ VOID MY_CHANGE_PROC(VOID)
 	//フェードイン
 	if (IsFadeIn == TRUE)
 	{
-		if (fadeInCnt < fadeInCntMAX)
+		if (fadeInCnt > fadeInCntMAX)
 		{
-			fadeInCnt++; //カウントアップ
+			fadeInCnt--;
 
 			//フェードインしながら再生（ミリ秒）
 			FadeInPlayAudio(&NowPlayBGM, fadeTimeMill);
 		}
 		else
 		{
-			//フェードインが終わったとき
-			StopAudio(&NowPlayBGM);		//BGM停止
 			fadeInCnt = fadeInCntInit;	//カウンタを初期化
 
 			//フェードアウトさせる
@@ -186,8 +228,8 @@ VOID MY_CHANGE_PROC(VOID)
 	//フェードアウト
 	if (IsFadeOut == TRUE)
 	{
-		if (fadeOutCnt > fadeOutCntMAX) {
-			fadeOutCnt--;	//カウントダウン
+		if (fadeOutCnt < fadeOutCntMAX) {
+			fadeOutCnt++;
 
 			//フェードアウトしながら再生（ミリ秒）
 			FadeOutPlayAudio(&NowPlayBGM, fadeTimeMill);
@@ -218,18 +260,6 @@ VOID MY_CHANGE_PROC(VOID)
 //切り替え画面の描画
 VOID MY_CHANGE_DRAW(VOID)
 {
-	//画面をだんだん透明にする(フェードイン)
-	if (IsFadeIn == TRUE) { SetDrawBlendMode(DX_BLENDMODE_ALPHA, ((float)fadeInCnt / fadeInCntMAX) * 255); }
-
-	//画面をだんだん透明にする(フェードアウト)
-	if (IsFadeOut == TRUE) { SetDrawBlendMode(DX_BLENDMODE_ALPHA, ((float)fadeOutCnt / fadeInCntMAX) * 255); }
-
-	//画面を黒い四角でフェードアウト
-	if (IsFadeIn == TRUE || IsFadeOut == TRUE) { DrawBox(0, 0, GAME_WIDTH, GAME_HEIGHT, GetColor(0, 255, 255), TRUE); }
-
-	//半透明終了
-	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-
 	//以前の画面を描画
 	switch (OldGameScene)
 	{
@@ -243,6 +273,18 @@ VOID MY_CHANGE_DRAW(VOID)
 		MY_END_DRAW();		//エンド画面
 		break;
 	}
+
+	//画面をだんだん透明にする(フェードイン)
+	if (IsFadeIn == TRUE) { SetDrawBlendMode(DX_BLENDMODE_ALPHA, ((float)fadeInCnt / fadeTimeMax) * 255); }
+
+	//画面をだんだん透明にする(フェードアウト)
+	if (IsFadeOut == TRUE) { SetDrawBlendMode(DX_BLENDMODE_ALPHA, ((float)fadeOutCnt / fadeTimeMax) * 255); }
+
+	//画面を黒い四角でフェードアウト
+	if (IsFadeIn == TRUE || IsFadeOut == TRUE) { DrawBox(0, 0, GAME_WIDTH, GAME_HEIGHT, GetColor(0,0,0), TRUE); }
+
+	//半透明終了
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
 	DrawString(0, 0, "切り替え画面", GetColor(255, 255, 255));
 	return;

@@ -18,7 +18,22 @@
 //########## マクロ定義 ##########
 
 //画像系
-#define IMAGE_SAMPLE_PATH		TEXT(".\\IMAGE\\dragon.png")	//サンプルのパス
+#define IMAGE_SLIME_PATH			TEXT(".\\IMAGE\\dragon.png")	//スライムのパス
+
+#define IMAGE_TITLE_BACK_PATH		TEXT(".\\IMAGE\\titleBack.png")	//タイトルの背景のパス
+
+#define IMAGE_PLAY_KUSA_BACK_PATH		TEXT(".\\IMAGE\\grass.png")	//プレイ背景のパス
+#define IMAGE_PLAY_DANJON_BACK_PATH		TEXT(".\\IMAGE\\maou.png")	//プレイ背景のパス
+#define IMAGE_PLAY_KAWA_BACK_PATH		TEXT(".\\IMAGE\\river.png")	//プレイ背景のパス
+#define IMAGE_PLAY_BOSS_BACK_PATH		TEXT(".\\IMAGE\\boss.png")	//プレイ背景のパス
+
+#define IMAGE_END_CLEAR_BACK_PATH		TEXT(".\\IMAGE\\clearimage.png")	//エンド背景のパス
+#define IMAGE_END_OVER_BACK_PATH		TEXT(".\\IMAGE\\gameover.png")		//エンド背景のパス
+
+#define IMAGE_END_CLEAR_LOGO_PATH		TEXT(".\\IMAGE\\gameclear_logo.png")		//エンドロゴ
+#define IMAGE_END_OVER_LOGO_PATH		TEXT(".\\IMAGE\\gameover_logo.png")			//エンドロゴ
+
+#define IMAGE_TITLE_LOGO_PATH			TEXT(".\\IMAGE\\titleLogo.png")				//タイトルのロゴ
 
 //エラーメッセージ
 #define IMAGE_LOAD_ERR_TITLE	TEXT("画像読み込みエラー")
@@ -79,7 +94,23 @@ struct DIVIMAGE
 //########## 外部のグローバル変数 ##########
 
 //画像関連
-extern IMAGE sampleImage;		//サンプル画像
+extern IMAGE slimeImage;		//スライムの画像
+
+extern IMAGE titleBackImage;	//タイトル背景画像
+
+extern IMAGE playkusaImage;		//プレイ背景画像(草原)
+extern IMAGE playdanjonImage;	//プレイ背景画像(ダンジョン)
+extern IMAGE playkawaImage;		//プレイ背景画像(川岸)
+extern IMAGE playbossImage;		//プレイ背景画像(ボス)
+
+extern IMAGE endClearImage;		//エンド背景画像(クリア)
+extern IMAGE endOverImage;		//エンド背景画像(オーバー)
+
+extern IMAGE endClearLogo;		//エンドロゴ画像(クリア)
+extern IMAGE endOverLogo;		//エンドロゴ画像(オーバー)
+
+extern IMAGE titleLogo;			//タイトルロゴ画像
+
 extern DIVIMAGE sampleDivImage;	//サンプル分割画像
 
 //########## プロトタイプ宣言 ##########

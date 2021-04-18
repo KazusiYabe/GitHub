@@ -26,9 +26,9 @@
 
 //音楽系
 #define BGM_TITLE_PATH		TEXT(".\\AUDIO\\BGM\\title.ogg")	
-#define BGM_PLAY_PATH		TEXT(".\\AUDIO\\BGM\\play.ogg")	
-#define BGM_END_CLEAR_PATH	TEXT(".\\AUDIO\\BGM\\battle.ogg")	
-#define BGM_END_OVER_PATH	TEXT(".\\AUDIO\\BGM\\星の胎動.ogg")	
+#define BGM_PLAY_PATH		TEXT(".\\AUDIO\\BGM\\battle.ogg")	
+#define BGM_END_CLEAR_PATH	TEXT(".\\AUDIO\\BGM\\秋晴れの空.ogg")	
+#define BGM_END_OVER_PATH	TEXT(".\\AUDIO\\BGM\\end.ogg")
 #define SE_SAMPLE_PATH		TEXT(".\\AUDIO\\SE\\coin.ogg")		
 
 //関数形式マクロ

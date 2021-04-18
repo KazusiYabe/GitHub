@@ -19,7 +19,7 @@
 //########## マクロ定義 ##########
 #define PATH_MAX			255		//パスの長さ
 #define STR_MAX				255		//文字の長さ
-#define DEBUG_MODE			TRUE	//デバッグモード
+#define DEBUG_MODE			FALSE	//デバッグモード
 
 #define GAME_WINDOW_MODE	TRUE	//ウィンドウモード
 #define GAME_WIDTH			1280	//ゲームの幅	（16）
@@ -28,7 +28,7 @@
 #define WINDOW_HEIGHT		GAME_HEIGHT		//ウィンドウの高さ
 #define GAME_COLOR			32		//ゲームの色ビット
 #define GAME_WINDOWBAR_KIND 0		//ウィンドウバーの種類
-#define GAME_WINDOW_NAME	"TITLE"	//ウィンドウのタイトル
+#define GAME_WINDOW_NAME	"HAMAMI-SlimeQuest-"	//ウィンドウのタイトル
 #define GAME_ICON_ID		333		//ウィンドウアイコンのID
 
 //########## 列挙型 ##########

@@ -13,7 +13,22 @@
 //########## グローバル変数 ##########
 
 //画像管理
-IMAGE sampleImage;	//サンプル画像
+IMAGE slimeImage;			//スライム画像
+IMAGE titleBackImage;		//タイトル背景画像
+
+IMAGE playkusaImage;		//プレイ背景画像(草原)
+IMAGE playdanjonImage;		//プレイ背景画像(ダンジョン)
+IMAGE playkawaImage;		//プレイ背景画像(川岸)
+IMAGE playbossImage;		//プレイ背景画像(ボス)
+
+IMAGE endClearImage;		//エンド背景画像(クリア)
+IMAGE endOverImage;			//エンド背景画像(オーバー)
+
+IMAGE endClearLogo;			//エンドロゴ画像(クリア)
+IMAGE endOverLogo;			//エンドロゴ画像(オーバー)
+
+IMAGE titleLogo;			//タイトルロゴ画像
+
 DIVIMAGE sampleDivImage;	//サンプル分割画像
 
 //########## 関数 ##########
@@ -24,8 +39,34 @@ DIVIMAGE sampleDivImage;	//サンプル分割画像
 /// <returns>読み込めたらTRUE/読み込めなかったらFALSE</returns>
 BOOL MY_IMAGE_LOAD(VOID)
 {
-	//サンプル画像の読み込み(引数は関数の説明を読んでね！)
-	if (MY_IMAGE_LOAD_FILE(&sampleImage, IMAGE_SAMPLE_PATH, GAME_WIDTH / 2, GAME_HEIGHT / 2, TRUE, GetRect(0, 0, 0, 0)) == FALSE) { return FALSE; }
+	//スライム画像の読み込み
+	if (MY_IMAGE_LOAD_FILE(&slimeImage, IMAGE_SLIME_PATH, GAME_WIDTH / 2, GAME_HEIGHT / 2, TRUE, GetRect(0, 0, 0, 0)) == FALSE) { return FALSE; }
+
+	//タイトル背景画像の読み込み
+	if (MY_IMAGE_LOAD_FILE(&titleBackImage, IMAGE_TITLE_BACK_PATH, GAME_WIDTH / 2, GAME_HEIGHT / 2, TRUE, GetRect(0, 0, 0, 0)) == FALSE) { return FALSE; }
+
+	//プレイ背景画像の読み込み
+	if (MY_IMAGE_LOAD_FILE(&playkusaImage, IMAGE_PLAY_KUSA_BACK_PATH, GAME_WIDTH / 2, GAME_HEIGHT / 2, TRUE, GetRect(0, 0, 0, 0)) == FALSE) { return FALSE; }
+	//プレイ背景画像の読み込み
+	if (MY_IMAGE_LOAD_FILE(&playdanjonImage, IMAGE_PLAY_DANJON_BACK_PATH, GAME_WIDTH / 2, GAME_HEIGHT / 2, TRUE, GetRect(0, 0, 0, 0)) == FALSE) { return FALSE; }
+	//プレイ背景画像の読み込み
+	if (MY_IMAGE_LOAD_FILE(&playkawaImage, IMAGE_PLAY_KAWA_BACK_PATH, GAME_WIDTH / 2, GAME_HEIGHT / 2, TRUE, GetRect(0, 0, 0, 0)) == FALSE) { return FALSE; }
+	//プレイ背景画像の読み込み
+	if (MY_IMAGE_LOAD_FILE(&playbossImage, IMAGE_PLAY_BOSS_BACK_PATH, GAME_WIDTH / 2, GAME_HEIGHT / 2, TRUE, GetRect(0, 0, 0, 0)) == FALSE) { return FALSE; }
+
+	//エンド背景画像の読み込み
+	if (MY_IMAGE_LOAD_FILE(&endClearImage, IMAGE_END_CLEAR_BACK_PATH, GAME_WIDTH / 2, GAME_HEIGHT / 2, TRUE, GetRect(0, 0, 0, 0)) == FALSE) { return FALSE; }
+	//エンド背景画像の読み込み
+	if (MY_IMAGE_LOAD_FILE(&endOverImage, IMAGE_END_OVER_BACK_PATH, GAME_WIDTH / 2, GAME_HEIGHT / 2, TRUE, GetRect(0, 0, 0, 0)) == FALSE) { return FALSE; }
+
+	//エンドロゴ画像の読み込み
+	if (MY_IMAGE_LOAD_FILE(&endClearLogo, IMAGE_END_CLEAR_LOGO_PATH, GAME_WIDTH / 2, GAME_HEIGHT / 4 * 3, TRUE, GetRect(0, 0, 0, 0)) == FALSE) { return FALSE; }
+	//エンドロゴ画像の読み込み
+	if (MY_IMAGE_LOAD_FILE(&endOverLogo, IMAGE_END_OVER_LOGO_PATH, GAME_WIDTH / 2, GAME_HEIGHT / 2, TRUE, GetRect(0, 0, 0, 0)) == FALSE) { return FALSE; }
+
+	//タイトルロゴ画像の読み込み
+	if (MY_IMAGE_LOAD_FILE(&titleLogo, IMAGE_TITLE_LOGO_PATH, GAME_WIDTH / 2, GAME_HEIGHT / 3 * 1, TRUE, GetRect(0, 0, 0, 0)) == FALSE) { return FALSE; }
+
 
 	//サンプル分割画像の読み込み
 	if (MY_IMAGE_LOAD_DIV_FILE(
@@ -244,8 +285,22 @@ VOID DrawDivImage(DIVIMAGE* image)
 /// <returns></returns>
 VOID MY_IMAGE_DELETE(VOID)
 {
-	//サンプル画像を削除
-	DeleteGraph(sampleImage.handle);
+	DeleteGraph(slimeImage.handle);
+	DeleteGraph(titleBackImage.handle);
+
+	DeleteGraph(playkusaImage.handle);
+	DeleteGraph(playdanjonImage.handle);
+	DeleteGraph(playkawaImage.handle);
+	DeleteGraph(playbossImage.handle);
+
+	DeleteGraph(endClearImage.handle);
+	DeleteGraph(endOverImage.handle);
+
+	DeleteGraph(endClearLogo.handle);
+	DeleteGraph(endOverLogo.handle);
+
+	DeleteGraph(titleLogo.handle);
+
 	for (int i = 0; i < sampleDivImage.DivMax; i++) { DeleteGraph(sampleDivImage.handle[i]); };
 
 	//他の画像もココで削除すること

@@ -95,7 +95,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		MY_FPS_UPDATE();
 
 		//以前のシーンを取得
-		OldGameScene = GameScene;
+		if (GameScene != GAME_SCENE_CHANGE)	//シーン切り替え以外なら
+		{
+			OldGameScene = GameScene;
+		}
 
 		//シーンごとに処理を行う
 		switch (GameScene)
@@ -117,8 +120,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		//シーン切り替え
 		if (OldGameScene != GameScene)
 		{
-			NextScene = GameScene;			//次のシーンを保存
-			GameScene = GAME_SCENE_CHANGE;	//画面切り替えに遷移
+			if (GameScene != GAME_SCENE_CHANGE)	//シーン切り替え以外なら
+			{
+				NextScene = GameScene;			//次のシーンを保存
+				GameScene = GAME_SCENE_CHANGE;	//画面切り替えに遷移
+			}
 		}
 
 		//キー入力の更新処理
