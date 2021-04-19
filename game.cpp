@@ -19,16 +19,15 @@
 
 #define PUSH_ENTER "-PUSH  ENTER-"
 #define WAZA_MAX	12
-
-#define PLAYER_NAME		"冒険者ブレイブ"
+#define WAZA_SELECT_MAX	4
 
 //########## 構造体 ##########
-struct MONSTER_DATA
+struct CHARACTOR_DATA
 {
 	char Name[STR_MAX] = "";
 	int HP = 0;			//体力
 	int HPMAX = 0;		//体力(MAX)
-	int ATK = 0;		//攻撃
+	float ATK = 1.0;	//攻撃力
 	int MP = 0;			//ＭＰ
 };//モンスターのデータ
 
@@ -37,7 +36,9 @@ struct WAZA_RECORD
 	int No = -1;
 	char Name[STR_MAX] = "";
 	int ATK = 0;
-	int MP = -1;
+	int MP = -1;		//使うMPの量
+	int HealHP = -1;	//HP回復量
+	int HealMP = -1;	//MP回復量
 };	//技レコード用
 
 enum COMMAND
@@ -58,10 +59,10 @@ enum BUTTLECOMMAND
 
 enum WAZACOMMAND
 {
-	wazaCmd0,
-	wazaCmd1,
-	wazaCmd2,
-	wazaCmd3
+	wazaSelect0,
+	wazaSelect1,
+	wazaSelect2,
+	wazaSelect3
 };
 
 
@@ -90,24 +91,26 @@ int titlePushCntMAX = 60;
 int titlePushPlus = 1;
 
 //モンスターデータ
-MONSTER_DATA dragonData;
-MONSTER_DATA slimeData;
-MONSTER_DATA tekiData;
+CHARACTOR_DATA dragonData;
+CHARACTOR_DATA slimeData;
+CHARACTOR_DATA tekiData;
+
+CHARACTOR_DATA playerData;
 
 //技テーブルデータ
 WAZA_RECORD wazaTable[WAZA_MAX]{
-	{0,"ヒッカキ",1,0},
-	{1,"キリツケ",1,0},
-	{2,"カミツキ",2,0},
-	{3,"スラッシュ",3,0},
-	{4,"アイシクル",5,10},
-	{5,"雷撃",5,10},
-	{6,"カエンビーーム",20,20},
-	{7,"トリプルソード",30,30},
-	{8,"小HP回復",-5,3},
-	{9,"小MP回復",0,-5},
-	{10,"-----",1,0},
-	{11,"-----",1,0}
+	{0,"ヒッカキ"		,1,		0,		0,		0},
+	{1,"キリツケ"		,1,		0,		0,		0},
+	{2,"ハサミ"			,2,		0,		0,		0},
+	{3,"スラッシュ"		,3,		0,		0,		0},
+	{4,"アイシクル"		,5,		10,		0,		0},
+	{5,"雷撃"			,5,		10,		0,		0},
+	{6,"カエンビーーム"	,20,	20,		0,		0},
+	{7,"トリプルソード"	,30,	30,		0,		0},
+	{8,"いやしの風"		,0,		5,		5,		0},
+	{9,"いやしの雨"		,0,		5,		0,		5},
+	{10,"アースヒール"	,0,		30,		30,		30},
+	{11,"聖なる光"		,0,		50,	   100,	   100}
 };
 
 //ステータスの表示系
@@ -119,7 +122,17 @@ RECT HpBarWaku;
 //コマンド系
 int NowCommand = encounter;
 int buttleCmd = attack;
-int wazaCmd = 0;
+int wazaSelectCmd = 0;		//選択した技の場所
+int wazaNo = 0;				//選択した技No.
+
+BOOL ProcCmdFlg = FALSE;	//技の説明が終わった？
+BOOL EffectEndFlg = FALSE;	//エフェクトが終わった？
+
+BOOL IsNotEnoughMP = FALSE;		//MPは足りる？
+
+int damageCnt = 0;
+int damageCntMAX = 60;
+BOOL damageProcFlg = FALSE;	//ダメージ処理を行ったか？
 
 //########## 関数のプロトタイプ宣言 ##########
 
@@ -151,15 +164,25 @@ VOID MY_TITLE_INIT(VOID)
 	strcpy_sDx(dragonData.Name, STR_MAX, "緑神竜グレガリゴン");
 	dragonData.HPMAX = 100;
 	dragonData.HP = dragonData.HPMAX;
-	dragonData.ATK = 10;
+	dragonData.ATK = 3.0;
 	dragonData.MP = 50;
 
 	//スライム
 	strcpy_sDx(slimeData.Name, STR_MAX, "ハマミースライム");
-	slimeData.HPMAX = 20;
+	slimeData.HPMAX = 10;
 	slimeData.HP = slimeData.HPMAX;
-	slimeData.ATK = 2;
-	slimeData.MP = 10;
+	slimeData.ATK = 1.0;
+	slimeData.MP = 5;
+
+	//プレイヤー
+	strcpy_sDx(playerData.Name, STR_MAX, "冒険者ブレイブ");
+	playerData.HPMAX = 20;
+	playerData.HP = slimeData.HPMAX;
+	playerData.ATK = 1.0;
+	playerData.MP = 10;
+
+	//スライムのデータを固定
+	tekiData = slimeData;
 
 	//ステータス系
 	HpBar = GetRect(wakuImage.pos.x + 60, statusHeight + 60, wakuImage.pos.x + 60 + HpBarMaxWidth, statusHeight + 60 + 60);
@@ -168,7 +191,8 @@ VOID MY_TITLE_INIT(VOID)
 	//コマンド系
 	NowCommand = encounter;
 	buttleCmd = attack;
-	wazaCmd = 0;
+	wazaSelectCmd = 0;
+	wazaNo = 0;
 
 	GameScene = GAME_SCENE_TITLE;	//ゲームシーンはタイトル画面から
 
@@ -310,6 +334,7 @@ VOID MY_PLAY_PROC(VOID)
 		{
 			PlayAudio(selectSE);
 			NowCommand = waza;	//次のコマンドへ
+			IsNotEnoughMP = FALSE;	//MPは足りる？
 		}
 
 		break;
@@ -325,40 +350,122 @@ VOID MY_PLAY_PROC(VOID)
 		if (MY_KEY_CLICK(KEY_INPUT_UP) == TRUE)
 		{
 			PlayAudio(selectSE);
-			if (wazaCmd >= wazaCmd2) { wazaCmd -= 2; }
+			if (wazaSelectCmd >= wazaSelect2) { wazaSelectCmd -= 2; }
 		}
 
 		if (MY_KEY_CLICK(KEY_INPUT_DOWN) == TRUE)
 		{
 			PlayAudio(selectSE);
-			if (wazaCmd <= wazaCmd1) { wazaCmd += 2; }
+			if (wazaSelectCmd <= wazaSelect1) { wazaSelectCmd += 2; }
 		}
 
 		if (MY_KEY_CLICK(KEY_INPUT_LEFT) == TRUE)
 		{
 			PlayAudio(selectSE);
-			if (wazaCmd == wazaCmd1 || wazaCmd == wazaCmd3) { wazaCmd--; }
+			if (wazaSelectCmd == wazaSelect1 || wazaSelectCmd == wazaSelect3) { wazaSelectCmd--; }
 		}
 
 		if (MY_KEY_CLICK(KEY_INPUT_RIGHT) == TRUE)
 		{
 			PlayAudio(selectSE);
-			if (wazaCmd == wazaCmd0 || wazaCmd == wazaCmd2) { wazaCmd++; }
+			if (wazaSelectCmd == wazaSelect0 || wazaSelectCmd == wazaSelect2) { wazaSelectCmd++; }
 		}
 
 		if (MY_KEY_CLICK(KEY_INPUT_RETURN) == TRUE)
 		{
+			wazaNo = (buttleCmd * WAZA_SELECT_MAX) + wazaSelectCmd;	//技Noを決定
+
+			if (playerData.MP < wazaTable[wazaNo].MP)
+			{
+				IsNotEnoughMP = TRUE;	//MPが足りない！
+			}
+
 			PlayAudio(selectSE);
+			ProcCmdFlg = FALSE;		//技の説明をする
 			NowCommand = process;	//次のコマンドへ
+
 		}
 
 		break;
 
 	case process:
-		if (MY_KEY_CLICK(KEY_INPUT_SPACE) == TRUE) { NowCommand++; }	//次のコマンドへ
+
+		//MPが足りないときは選択し直す
+		if (IsNotEnoughMP == TRUE)
+		{
+			EffectEndFlg = FALSE;
+			if (MY_KEY_CLICK(KEY_INPUT_BACK) == TRUE)
+			{
+				PlayAudio(selectSE);
+				NowCommand = waza;		//前のコマンドへ
+				IsNotEnoughMP = FALSE;
+				break;
+			}
+		}
+
+		//MPが足りていれば
+		if (IsNotEnoughMP == FALSE)
+		{
+			if (MY_KEY_CLICK(KEY_INPUT_RETURN) == TRUE)
+			{
+				ProcCmdFlg = TRUE;
+				EffectEndFlg = FALSE;
+			}
+		}
+
+		//エフェクトがおわったら
+		if (EffectEndFlg == TRUE)
+		{
+			damageProcFlg = FALSE;	//ダメージ処理
+			damageCnt = 0;
+			NowCommand = damage;	//次のコマンドへ
+		}
+
 		break;
 	case damage:
-		if (MY_KEY_CLICK(KEY_INPUT_SPACE) == TRUE) { NowCommand = input; }
+
+		if (damageProcFlg == FALSE)
+		{
+			if (buttleCmd == attack || buttleCmd == magic)
+			{
+				tekiData.HP -= (int)ceil(playerData.ATK * wazaTable[wazaNo].ATK);	//HPを減らす
+				if (tekiData.HP < 0) { tekiData.HP = 0; }
+				playerData.MP -= wazaTable[wazaNo].MP;	//MPを減らす
+				if (tekiData.MP < 0) { tekiData.MP = 0; }
+			}
+			else if (buttleCmd == recovery)
+			{
+				playerData.HP += wazaTable[wazaNo].HealHP;	//HPを増やす
+				playerData.MP += wazaTable[wazaNo].HealMP;	//MPを増やす
+			}
+			damageProcFlg = TRUE;
+		}
+
+		//自動で次のコマンドへ
+		if (damageCnt < damageCntMAX) { damageCnt++; }
+		else
+		{
+			//敵のHPが0以下になったとき
+			if (tekiData.HP <= 0)
+			{
+				GameScene = GAME_SCENE_END;		//エンド画面へ
+				IsSlimeWin = TRUE;				//敵に勝った！
+				IsFadeIn = FALSE;				//フェードインはしない！
+				IsFadeOut = TRUE;				//フェードアウト開始！
+			}
+
+			//自分のHPは0以下になったとき
+			if (playerData.HP <= 0)
+			{
+				GameScene = GAME_SCENE_END;		//エンド画面へ
+				IsSlimeWin = FALSE;				//敵に負けた
+				IsFadeIn = FALSE;				//フェードインはしない！
+				IsFadeOut = TRUE;				//フェードアウト開始！
+			}
+
+			NowCommand = input;
+		}
+
 		break;
 	}
 
@@ -380,15 +487,13 @@ VOID MY_PLAY_DRAW(VOID)
 	//スライム：slimeImage
 	DrawImage(dragonImage);
 
-	//スライムのデータを固定
-	tekiData = slimeData;
-
 	//モンスターのステータス
 	DrawImage(wakuImage);
 	DrawStringToHandle(wakuImage.pos.x + 60, statusHeight, tekiData.Name, GetColor(255, 255, 255), fontMonster.handle);
 
 	//HPによってバーを縮める
 	HpBar.right = HpBar.left + ((float)tekiData.HP / tekiData.HPMAX) * HpBarMaxWidth;
+	if (HpBar.right < HpBar.left) { HpBar.right = HpBar.left; }	//HPバーを超えないように
 
 	//HPバーの色を変える
 	if (tekiData.HP < tekiData.HPMAX / 8) { DrawRect(HpBar, GetColor(204, 75, 49), TRUE); }
@@ -401,7 +506,7 @@ VOID MY_PLAY_DRAW(VOID)
 	//メッセージ枠描画
 	DrawImage(messageImage);
 	//プレイヤー名前描画
-	DrawStringToHandle(messageImage.pos.x + 5, messageImage.pos.y + 10, PLAYER_NAME, GetColor(255, 255, 255), fontPlayer.handle);
+	DrawStringToHandle(messageImage.pos.x + 5, messageImage.pos.y + 10, playerData.Name, GetColor(255, 255, 255), fontPlayer.handle);
 
 	unsigned int selectColor = GetColor(245, 245, 245);
 	unsigned int notselectColor = GetColor(102, 102, 102);
@@ -414,6 +519,8 @@ VOID MY_PLAY_DRAW(VOID)
 	unsigned int waza2Color = notselectColor;
 	unsigned int waza3Color = notselectColor;
 	unsigned int waza4Color = notselectColor;
+
+	char ProcText[STR_MAX];
 
 	//コマンド系の処理
 	switch (NowCommand)
@@ -443,10 +550,10 @@ VOID MY_PLAY_DRAW(VOID)
 		DrawStringToHandle(messageImage.pos.x + 10, messageImage.pos.y + 50 + 40, "マホウ", mahouColor, fontCommand.handle);
 		DrawStringToHandle(messageImage.pos.x + 10, messageImage.pos.y + 50 + 80, "カイフク", kaihukuColor, fontCommand.handle);
 
-		if (wazaCmd == 0) { waza1Color = selectColor; }
-		else if (wazaCmd == 1) { waza2Color = selectColor; }
-		else if (wazaCmd == 2) { waza3Color = selectColor; }
-		else if (wazaCmd == 3) { waza4Color = selectColor; }
+		if (wazaSelectCmd == 0) { waza1Color = selectColor; }
+		else if (wazaSelectCmd == 1) { waza2Color = selectColor; }
+		else if (wazaSelectCmd == 2) { waza3Color = selectColor; }
+		else if (wazaSelectCmd == 3) { waza4Color = selectColor; }
 
 		//技を描画
 		if (buttleCmd == attack)
@@ -456,14 +563,14 @@ VOID MY_PLAY_DRAW(VOID)
 			DrawStringToHandle(messageImage.pos.x + 10 + 200, messageImage.pos.y + 50 + 50, wazaTable[2].Name, waza3Color, fontCommand.handle);
 			DrawStringToHandle(messageImage.pos.x + 10 + 500, messageImage.pos.y + 50 + 50, wazaTable[3].Name, waza4Color, fontCommand.handle);
 		}
-		if (buttleCmd == magic)
+		else if (buttleCmd == magic)
 		{
 			DrawStringToHandle(messageImage.pos.x + 10 + 200, messageImage.pos.y + 50, wazaTable[4].Name, waza1Color, fontCommand.handle);
 			DrawStringToHandle(messageImage.pos.x + 10 + 500, messageImage.pos.y + 50, wazaTable[5].Name, waza2Color, fontCommand.handle);
 			DrawStringToHandle(messageImage.pos.x + 10 + 200, messageImage.pos.y + 50 + 50, wazaTable[6].Name, waza3Color, fontCommand.handle);
 			DrawStringToHandle(messageImage.pos.x + 10 + 500, messageImage.pos.y + 50 + 50, wazaTable[7].Name, waza4Color, fontCommand.handle);
 		}
-		if (buttleCmd == recovery)
+		else if (buttleCmd == recovery)
 		{
 			DrawStringToHandle(messageImage.pos.x + 10 + 200, messageImage.pos.y + 50, wazaTable[8].Name, waza1Color, fontCommand.handle);
 			DrawStringToHandle(messageImage.pos.x + 10 + 500, messageImage.pos.y + 50, wazaTable[9].Name, waza2Color, fontCommand.handle);
@@ -476,10 +583,48 @@ VOID MY_PLAY_DRAW(VOID)
 
 	case process:
 
+		if (IsNotEnoughMP == FALSE)
+		{
+			if (buttleCmd == attack)
+			{
+				sprintfDx(ProcText, "%sは%s攻撃した！", playerData.Name, wazaTable[wazaNo].Name);
+			}
+			else if (buttleCmd == magic)
+			{
+				sprintfDx(ProcText, "%sは%sを唱えた！", playerData.Name, wazaTable[wazaNo].Name);
+			}
+			else if (buttleCmd == recovery)
+			{
+				sprintfDx(ProcText, "%sは%sを祈った！", playerData.Name, wazaTable[wazaNo].Name);
+			}
+
+
+			EffectEndFlg = TRUE;
+			//エフェクト描画
+			if (EffectEndFlg == TRUE)
+			{
+
+			}
+
+		}
+		else
+		{
+			sprintfDx(ProcText, "MPが足りない...技を選び直さねば...");
+		}
+		DrawFormatStringToHandle(messageImage.pos.x + 10, messageImage.pos.y + 50, GetColor(255, 255, 255), fontCommand.handle, ProcText);
 
 		break;
 	case damage:
 
+		if (buttleCmd == attack || buttleCmd == magic)
+		{
+			sprintfDx(ProcText, "%sに[%3d]アタックした！！", tekiData.Name, (int)ceil(playerData.ATK * wazaTable[wazaNo].ATK));
+		}
+		else if (buttleCmd == recovery)
+		{
+			sprintfDx(ProcText, "%sは[HP%3d/MP%3d]回復した", playerData.Name, wazaTable[wazaNo].HealHP, wazaTable[wazaNo].HealMP);
+		}
+		DrawFormatStringToHandle(messageImage.pos.x + 10, messageImage.pos.y + 50, GetColor(255, 255, 255), fontCommand.handle, ProcText);
 
 		break;
 	}
@@ -520,10 +665,6 @@ VOID MY_END_PROC(VOID)
 		GameScene = GAME_SCENE_TITLE;	//タイトル画面へ
 		IsFadeIn = FALSE;				//フェードインはしない！
 		IsFadeOut = TRUE;				//フェードアウト開始！
-
-		//ゲーム初期化
-		MY_TITLE_INIT();
-
 		return;
 	}
 
@@ -615,6 +756,10 @@ VOID MY_CHANGE_PROC(VOID)
 
 		GameScene = NextScene;					//ゲームシーンを切り替える
 		OldGameScene = GameScene;				//ゲームシーン(直前)も切り替える
+
+		//ゲーム初期化
+		if (GameScene == GAME_SCENE_TITLE) { MY_TITLE_INIT(); }
+
 	}
 
 	return;

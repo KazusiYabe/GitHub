@@ -66,9 +66,9 @@ BOOL MY_IMAGE_LOAD(VOID)
 	if (MY_IMAGE_LOAD_FILE(&endOverImage, IMAGE_END_OVER_BACK_PATH, GAME_WIDTH / 2, GAME_HEIGHT / 2, TRUE, GetRect(0, 0, 0, 0)) == FALSE) { return FALSE; }
 
 	//エンドロゴ画像の読み込み
-	if (MY_IMAGE_LOAD_FILE(&endClearLogo, IMAGE_END_CLEAR_LOGO_PATH, GAME_WIDTH / 2, GAME_HEIGHT / 4 * 3, TRUE, GetRect(0, 0, 0, 0)) == FALSE) { return FALSE; }
+	if (MY_IMAGE_LOAD_FILE(&endClearLogo, IMAGE_END_CLEAR_LOGO_PATH, GAME_WIDTH / 2, GAME_HEIGHT / 4 * 1, TRUE, GetRect(0, 0, 0, 0)) == FALSE) { return FALSE; }
 	//エンドロゴ画像の読み込み
-	if (MY_IMAGE_LOAD_FILE(&endOverLogo, IMAGE_END_OVER_LOGO_PATH, GAME_WIDTH / 2, GAME_HEIGHT / 2, TRUE, GetRect(0, 0, 0, 0)) == FALSE) { return FALSE; }
+	if (MY_IMAGE_LOAD_FILE(&endOverLogo, IMAGE_END_OVER_LOGO_PATH, GAME_WIDTH / 2, GAME_HEIGHT / 4 * 1, TRUE, GetRect(0, 0, 0, 0)) == FALSE) { return FALSE; }
 
 	//タイトルロゴ画像の読み込み
 	if (MY_IMAGE_LOAD_FILE(&titleLogo, IMAGE_TITLE_LOGO_PATH, GAME_WIDTH / 2, GAME_HEIGHT / 3 * 1, TRUE, GetRect(0, 0, 0, 0)) == FALSE) { return FALSE; }
