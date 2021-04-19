@@ -25,6 +25,9 @@
 #define FONT_JIYU_PATH			TEXT(".\\FONT\\Jiyucho.ttf")		//フォントの場所
 #define FONT_JIYU_NAME			TEXT("じゆうちょうフォント")		//フォントの名前
 
+#define FONT_DELTA_PATH			TEXT(".\\FONT\\DelaGothicOne-Regular.ttf")		//フォントの場所
+#define FONT_DELTA_NAME			TEXT("Dela Gothic One")							//フォントの名前
+
 #define DEF_FONT_NAME	FONT_JIYU_NAME				//デフォルトのフォント名
 #define DEF_FONT_SIZE	20							//デフォルトのサイズ
 #define DEF_FONT_THINCK	1							//デフォルトの太さ
@@ -50,7 +53,7 @@ struct FONT
 
 //フォント関連
 extern FONT fontdef;		//デフォルトのフォント
-extern FONT fontSample;		//サンプルのフォント
+extern FONT fontTitlePush;	//タイトルのフォント
 
 //########## プロトタイプ宣言 ##########
 //※extern は、外部に関数がありますよ！という目印でつけています。

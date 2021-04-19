@@ -12,8 +12,8 @@
 //########## グローバル変数 ##########
 
 //フォントデータを管理
-FONT fontdef;		//デフォルトのフォント
-FONT fontSample;	//サンプルのフォント
+FONT fontdef;			//デフォルトのフォント
+FONT fontTitlePush;		//タイトルのフォント
 
 //########## 関数 ##########
 
@@ -59,6 +59,26 @@ BOOL MY_FONT_LOAD(VOID)
 		fontdef.Type	//フォントのタイプを設定
 	);
 
+	//＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊
+
+	//フォントを一時的に読み込み(WinAPI)
+	if (AddFontResourceEx(FONT_DELTA_PATH, FR_PRIVATE, NULL) == 0)
+	{
+		//エラーメッセージ表示
+		MessageBox(GetMainWindowHandle(), FONT_DELTA_NAME, FONT_INSTALL_ERR_TITLE, MB_OK);
+		return FALSE;
+	}
+
+	//フォントを作成
+	MY_FONT_SET(&fontTitlePush, FONT_DELTA_NAME, 80, 1, DEF_FONT_TYPE);
+	fontTitlePush.handle = CreateFontToHandle(
+		fontTitlePush.Name,		//フォント名を設定
+		fontTitlePush.Size, 	//フォントのサイズを設定
+		fontTitlePush.Thinck,	//フォントの太さを設定
+		fontTitlePush.Type		//フォントのタイプを設定
+	);
+
+
 	return TRUE;
 }
 
@@ -103,10 +123,12 @@ VOID MY_FONT_DELETE(VOID)
 {
 	//デフォルトフォント削除
 	DeleteFontToHandle(fontdef.handle);
+	DeleteFontToHandle(fontTitlePush.handle);
 
 	//一時的に読み込んだフォントを削除(WinAPI)
 	RemoveFontResourceEx(FONT_TANUKI_PATH, FR_PRIVATE, NULL);
 	RemoveFontResourceEx(FONT_JIYU_PATH, FR_PRIVATE, NULL);
+	RemoveFontResourceEx(FONT_DELTA_NAME, FR_PRIVATE, NULL);
 
 	return;
 }

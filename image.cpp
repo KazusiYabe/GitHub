@@ -13,6 +13,7 @@
 //########## グローバル変数 ##########
 
 //画像管理
+IMAGE dragonImage;			//ドラゴン画像
 IMAGE slimeImage;			//スライム画像
 IMAGE titleBackImage;		//タイトル背景画像
 
@@ -39,6 +40,8 @@ DIVIMAGE sampleDivImage;	//サンプル分割画像
 /// <returns>読み込めたらTRUE/読み込めなかったらFALSE</returns>
 BOOL MY_IMAGE_LOAD(VOID)
 {
+	//ドラゴン画像の読み込み
+	if (MY_IMAGE_LOAD_FILE(&dragonImage, IMAGE_DRAGON_PATH, GAME_WIDTH / 2, GAME_HEIGHT / 2, TRUE, GetRect(0, 0, 0, 0)) == FALSE) { return FALSE; }
 	//スライム画像の読み込み
 	if (MY_IMAGE_LOAD_FILE(&slimeImage, IMAGE_SLIME_PATH, GAME_WIDTH / 2, GAME_HEIGHT / 2, TRUE, GetRect(0, 0, 0, 0)) == FALSE) { return FALSE; }
 
@@ -286,6 +289,7 @@ VOID DrawDivImage(DIVIMAGE* image)
 VOID MY_IMAGE_DELETE(VOID)
 {
 	DeleteGraph(slimeImage.handle);
+	DeleteGraph(dragonImage.handle);
 	DeleteGraph(titleBackImage.handle);
 
 	DeleteGraph(playkusaImage.handle);

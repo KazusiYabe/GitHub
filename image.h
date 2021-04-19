@@ -18,7 +18,8 @@
 //########## マクロ定義 ##########
 
 //画像系
-#define IMAGE_SLIME_PATH			TEXT(".\\IMAGE\\dragon.png")	//スライムのパス
+#define IMAGE_DRAGON_PATH			TEXT(".\\IMAGE\\dragon.png")	//ドラゴンのパス
+#define IMAGE_SLIME_PATH			TEXT(".\\IMAGE\\slime.png")		//スライムのパス
 
 #define IMAGE_TITLE_BACK_PATH		TEXT(".\\IMAGE\\titleBack.png")	//タイトルの背景のパス
 
