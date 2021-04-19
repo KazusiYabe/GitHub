@@ -51,6 +51,9 @@ extern BOOL IsFadeIn;	//フェードイン
 
 //########## プロトタイプ宣言 ##########
 //※extern は、外部に関数がありますよ！という目印でつけています。
+
+extern VOID MY_TITLE_INIT(VOID);	//ゲームタイトル初期化
+
 extern VOID MY_TITLE(VOID);				//タイトル画面
 extern VOID MY_TITLE_PROC(VOID);		//タイトル画面の処理
 extern VOID MY_TITLE_DRAW(VOID);		//タイトル画面の描画

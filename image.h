@@ -36,6 +36,9 @@
 
 #define IMAGE_TITLE_LOGO_PATH			TEXT(".\\IMAGE\\titleLogo.png")				//タイトルのロゴ
 
+#define IMAGE_WAKU_PATH					TEXT(".\\IMAGE\\waku.png")					//モンスターの枠
+#define IMAGE_MESSAGE_PATH				TEXT(".\\IMAGE\\message.png")				//メッセージ枠
+
 //エラーメッセージ
 #define IMAGE_LOAD_ERR_TITLE	TEXT("画像読み込みエラー")
 
@@ -95,6 +98,7 @@ struct DIVIMAGE
 //########## 外部のグローバル変数 ##########
 
 //画像関連
+extern IMAGE dragonImage;			//ドラゴン画像
 extern IMAGE slimeImage;		//スライムの画像
 
 extern IMAGE titleBackImage;	//タイトル背景画像
@@ -111,6 +115,8 @@ extern IMAGE endClearLogo;		//エンドロゴ画像(クリア)
 extern IMAGE endOverLogo;		//エンドロゴ画像(オーバー)
 
 extern IMAGE titleLogo;			//タイトルロゴ画像
+extern IMAGE wakuImage;			//モンスター枠画像
+extern IMAGE messageImage;			//メッセージ枠画像
 
 extern DIVIMAGE sampleDivImage;	//サンプル分割画像
 

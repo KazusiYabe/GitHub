@@ -30,6 +30,9 @@ IMAGE endOverLogo;			//エンドロゴ画像(オーバー)
 
 IMAGE titleLogo;			//タイトルロゴ画像
 
+IMAGE wakuImage;			//モンスター枠画像
+IMAGE messageImage;				//メッセージ枠画像
+
 DIVIMAGE sampleDivImage;	//サンプル分割画像
 
 //########## 関数 ##########
@@ -69,6 +72,10 @@ BOOL MY_IMAGE_LOAD(VOID)
 
 	//タイトルロゴ画像の読み込み
 	if (MY_IMAGE_LOAD_FILE(&titleLogo, IMAGE_TITLE_LOGO_PATH, GAME_WIDTH / 2, GAME_HEIGHT / 3 * 1, TRUE, GetRect(0, 0, 0, 0)) == FALSE) { return FALSE; }
+	//モンスター枠画像の読み込み
+	if (MY_IMAGE_LOAD_FILE(&wakuImage, IMAGE_WAKU_PATH, GAME_WIDTH / 2, 100, TRUE, GetRect(0, 0, 0, 0)) == FALSE) { return FALSE; }
+	//モンスター枠画像の読み込み
+	if (MY_IMAGE_LOAD_FILE(&messageImage, IMAGE_MESSAGE_PATH, GAME_WIDTH / 2, GAME_HEIGHT - 100, TRUE, GetRect(0, 0, 0, 0)) == FALSE) { return FALSE; }
 
 
 	//サンプル分割画像の読み込み
@@ -304,6 +311,8 @@ VOID MY_IMAGE_DELETE(VOID)
 	DeleteGraph(endOverLogo.handle);
 
 	DeleteGraph(titleLogo.handle);
+	DeleteGraph(wakuImage.handle);
+	DeleteGraph(messageImage.handle);
 
 	for (int i = 0; i < sampleDivImage.DivMax; i++) { DeleteGraph(sampleDivImage.handle[i]); };
 

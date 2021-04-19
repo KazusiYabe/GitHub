@@ -29,7 +29,10 @@
 #define BGM_PLAY_PATH		TEXT(".\\AUDIO\\BGM\\battle.ogg")	
 #define BGM_END_CLEAR_PATH	TEXT(".\\AUDIO\\BGM\\秋晴れの空.ogg")	
 #define BGM_END_OVER_PATH	TEXT(".\\AUDIO\\BGM\\end.ogg")
+
 #define SE_SAMPLE_PATH		TEXT(".\\AUDIO\\SE\\coin.ogg")		
+#define SE_SELECT_PATH			TEXT(".\\AUDIO\\SE\\battle_select.mp3")		
+#define SE_SELECT_ENTER_PATH	TEXT(".\\AUDIO\\SE\\battle_select_enter.mp3")		
 
 //関数形式マクロ
 #define GetVolume(volume)	(255 * volume / 100)					//ボリュームの計算式
@@ -60,7 +63,10 @@ extern AUDIO TitleBGM;		//タイトルのBGM
 extern AUDIO PlayBGM;		//プレイのBGM
 extern AUDIO EndClearBGM;	//エンドクリアのBGM
 extern AUDIO EndOverBGM;	//エンドオーバーのBGM
+
 extern AUDIO sampleSE;		//サンプルSE
+extern AUDIO selectSE;			//選択SE
+extern AUDIO selectEnterSE;		//選択SE
 
 //########## プロトタイプ宣言 ##########
 //※extern は、外部に関数がありますよ！という目印でつけています。

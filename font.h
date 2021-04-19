@@ -54,6 +54,9 @@ struct FONT
 //フォント関連
 extern FONT fontdef;		//デフォルトのフォント
 extern FONT fontTitlePush;	//タイトルのフォント
+extern FONT fontMonster;	//モンスターのフォント
+extern FONT fontPlayer;		//プレイヤーの名前のフォント
+extern FONT fontCommand;		//コマンドのフォント
 
 //########## プロトタイプ宣言 ##########
 //※extern は、外部に関数がありますよ！という目印でつけています。

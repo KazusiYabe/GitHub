@@ -74,7 +74,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	if (MY_AUDIO_LOAD() == FALSE) { return -1; DxLib_End(); }
 
 	//ゲームの初期化
-	GameScene = GAME_SCENE_TITLE;	//ゲームシーンはタイトル画面から
+	MY_TITLE_INIT();
 
 	//無限ループ
 	while (TRUE)

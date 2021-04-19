@@ -18,7 +18,10 @@ AUDIO TitleBGM;		//タイトルのBGM
 AUDIO PlayBGM;		//プレイのBGM
 AUDIO EndClearBGM;	//エンドクリアのBGM
 AUDIO EndOverBGM;	//エンドオーバーのBGM
-AUDIO sampleSE;		//サンプルSE
+
+AUDIO sampleSE;			//サンプルSE
+AUDIO selectSE;			//選択SE
+AUDIO selectEnterSE;	//選択SE
 
 //########## 関数 ##########
 
@@ -30,12 +33,14 @@ BOOL MY_AUDIO_LOAD(VOID)
 {
 	//BGMの読み込み
 	if (MY_AUDIO_LOAD_FILE(&TitleBGM, BGM_TITLE_PATH, 50, DX_PLAYTYPE_LOOP) == FALSE) { return FALSE; }
-	if (MY_AUDIO_LOAD_FILE(&PlayBGM, BGM_PLAY_PATH, 50, DX_PLAYTYPE_LOOP) == FALSE) { return FALSE; }
+	if (MY_AUDIO_LOAD_FILE(&PlayBGM, BGM_PLAY_PATH, 30, DX_PLAYTYPE_LOOP) == FALSE) { return FALSE; }
 	if (MY_AUDIO_LOAD_FILE(&EndClearBGM, BGM_END_CLEAR_PATH, 50, DX_PLAYTYPE_LOOP) == FALSE) { return FALSE; }
 	if (MY_AUDIO_LOAD_FILE(&EndOverBGM, BGM_END_OVER_PATH, 50, DX_PLAYTYPE_LOOP) == FALSE) { return FALSE; }
 
 	//サンプル音楽の読み込み(引数は関数の説明を読んでね！)
 	if (MY_AUDIO_LOAD_FILE(&sampleSE, SE_SAMPLE_PATH, 100, DX_PLAYTYPE_BACK) == FALSE) { return FALSE; }
+	if (MY_AUDIO_LOAD_FILE(&selectSE, SE_SELECT_PATH, 100, DX_PLAYTYPE_BACK) == FALSE) { return FALSE; }
+	if (MY_AUDIO_LOAD_FILE(&selectEnterSE, SE_SELECT_ENTER_PATH, 100, DX_PLAYTYPE_BACK) == FALSE) { return FALSE; }
 
 	//他の音楽もココで読み込むこと
 
@@ -53,7 +58,10 @@ VOID MY_AUDIO_DELETE(VOID)
 	DeleteSoundMem(PlayBGM.handle);
 	DeleteSoundMem(EndClearBGM.handle);
 	DeleteSoundMem(EndOverBGM.handle);
+
 	DeleteSoundMem(sampleSE.handle);
+	DeleteSoundMem(selectSE.handle);
+	DeleteSoundMem(selectEnterSE.handle);
 
 	//他の画像もココで削除すること
 

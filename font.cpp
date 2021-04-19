@@ -14,6 +14,9 @@
 //フォントデータを管理
 FONT fontdef;			//デフォルトのフォント
 FONT fontTitlePush;		//タイトルのフォント
+FONT fontMonster;		//モンスターのフォント
+FONT fontPlayer;		//プレイヤーの名前のフォント
+FONT fontCommand;		//コマンドのフォント
 
 //########## 関数 ##########
 
@@ -78,6 +81,32 @@ BOOL MY_FONT_LOAD(VOID)
 		fontTitlePush.Type		//フォントのタイプを設定
 	);
 
+	//フォントを作成
+	MY_FONT_SET(&fontMonster, FONT_DELTA_NAME, 50, 1, DEF_FONT_TYPE);
+	fontMonster.handle = CreateFontToHandle(
+		fontMonster.Name,		//フォント名を設定
+		fontMonster.Size, 	//フォントのサイズを設定
+		fontMonster.Thinck,	//フォントの太さを設定
+		fontMonster.Type		//フォントのタイプを設定
+	);
+
+	//フォントを作成
+	MY_FONT_SET(&fontPlayer, FONT_TANUKI_NAME, 25, 1, DEF_FONT_TYPE);
+	fontPlayer.handle = CreateFontToHandle(
+		fontPlayer.Name,		//フォント名を設定
+		fontPlayer.Size, 	//フォントのサイズを設定
+		fontPlayer.Thinck,	//フォントの太さを設定
+		fontPlayer.Type		//フォントのタイプを設定
+	);
+
+	//フォントを作成
+	MY_FONT_SET(&fontCommand, FONT_DELTA_NAME, 35, 1, DEF_FONT_TYPE);
+	fontCommand.handle = CreateFontToHandle(
+		fontCommand.Name,		//フォント名を設定
+		fontCommand.Size, 	//フォントのサイズを設定
+		fontCommand.Thinck,	//フォントの太さを設定
+		fontCommand.Type		//フォントのタイプを設定
+	);
 
 	return TRUE;
 }
@@ -124,6 +153,8 @@ VOID MY_FONT_DELETE(VOID)
 	//デフォルトフォント削除
 	DeleteFontToHandle(fontdef.handle);
 	DeleteFontToHandle(fontTitlePush.handle);
+	DeleteFontToHandle(fontPlayer.handle);
+	DeleteFontToHandle(fontCommand.handle);
 
 	//一時的に読み込んだフォントを削除(WinAPI)
 	RemoveFontResourceEx(FONT_TANUKI_PATH, FR_PRIVATE, NULL);
