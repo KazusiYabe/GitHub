@@ -54,7 +54,7 @@
 #define IMAGE_WAZA0_DIV_PATH		TEXT(".\\IMAGE\\EFFECT\\hikkaku.png")	//サンプルのパス
 #define IMAGE_WAZA1_DIV_PATH		TEXT(".\\IMAGE\\EFFECT\\slash.png")	//サンプルのパス
 #define IMAGE_WAZA2_DIV_PATH		TEXT(".\\IMAGE\\EFFECT\\kamituku.png")	//サンプルのパス
-#define IMAGE_WAZA3_DIV_PATH		TEXT(".\\IMAGE\\EFFECT\\slash.png")	//サンプルのパス
+#define IMAGE_WAZA3_DIV_PATH		TEXT(".\\IMAGE\\EFFECT\\slash2.png")	//サンプルのパス
 
 #define IMAGE_WAZA4_DIV_PATH		TEXT(".\\IMAGE\\EFFECT\\ice.png")	//サンプルのパス
 #define IMAGE_WAZA5_DIV_PATH		TEXT(".\\IMAGE\\EFFECT\\raigeki.png")	//サンプルのパス
@@ -114,7 +114,8 @@ struct DIVIMAGE
 
 //画像関連
 extern IMAGE dragonImage;			//ドラゴン画像
-extern IMAGE slimeImage;		//スライムの画像
+extern IMAGE slimeImage;			//スライムの画像
+extern IMAGE tekiImage;				//敵の画像
 
 extern IMAGE titleBackImage;	//タイトル背景画像
 

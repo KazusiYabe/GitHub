@@ -15,6 +15,7 @@
 //画像管理
 IMAGE dragonImage;			//ドラゴン画像
 IMAGE slimeImage;			//スライム画像
+IMAGE tekiImage;			//敵の画像
 IMAGE titleBackImage;		//タイトル背景画像
 
 IMAGE playkusaImage;		//プレイ背景画像(草原)
@@ -44,9 +45,9 @@ DIVIMAGE effectImage[EFFECT_MAX];	//エフェクト分割画像
 BOOL MY_IMAGE_LOAD(VOID)
 {
 	//ドラゴン画像の読み込み
-	if (MY_IMAGE_LOAD_FILE(&dragonImage, IMAGE_DRAGON_PATH, GAME_WIDTH / 2, GAME_HEIGHT / 2, TRUE, GetRect(0, 0, 0, 0)) == FALSE) { return FALSE; }
+	if (MY_IMAGE_LOAD_FILE(&dragonImage, IMAGE_DRAGON_PATH, 0, GAME_HEIGHT / 2, TRUE, GetRect(0, 0, 0, 0)) == FALSE) { return FALSE; }
 	//スライム画像の読み込み
-	if (MY_IMAGE_LOAD_FILE(&slimeImage, IMAGE_SLIME_PATH, GAME_WIDTH / 2, GAME_HEIGHT / 2, TRUE, GetRect(0, 0, 0, 0)) == FALSE) { return FALSE; }
+	if (MY_IMAGE_LOAD_FILE(&slimeImage, IMAGE_SLIME_PATH, 0, GAME_HEIGHT / 2, TRUE, GetRect(0, 0, 0, 0)) == FALSE) { return FALSE; }
 
 	//タイトル背景画像の読み込み
 	if (MY_IMAGE_LOAD_FILE(&titleBackImage, IMAGE_TITLE_BACK_PATH, GAME_WIDTH / 2, GAME_HEIGHT / 2, TRUE, GetRect(0, 0, 0, 0)) == FALSE) { return FALSE; }
@@ -78,10 +79,34 @@ BOOL MY_IMAGE_LOAD(VOID)
 	if (MY_IMAGE_LOAD_FILE(&messageImage, IMAGE_MESSAGE_PATH, GAME_WIDTH / 2, GAME_HEIGHT - 100, TRUE, GetRect(0, 0, 0, 0)) == FALSE) { return FALSE; }
 
 
-	//サンプル分割画像の読み込み
+	//エフェクト画像の読み込み
 	if (MY_IMAGE_LOAD_DIV_FILE(
 		&effectImage[0], IMAGE_WAZA0_DIV_PATH,
-		5, 2, (1200 / 5), (480 / 2),	//画像によって数値を変更すること（サンプルは、縦に５列、横に２行、幅240、高さ240という意味）
+		5, 2, (2400 / 5), (960 / 2),	//画像によって数値を変更すること
+		GAME_WIDTH / 2, GAME_HEIGHT / 2, TRUE, GetRect(0, 0, 0, 0)) == FALSE) {
+		return FALSE;
+	}
+
+	//エフェクト画像の読み込み
+	if (MY_IMAGE_LOAD_DIV_FILE(
+		&effectImage[1], IMAGE_WAZA1_DIV_PATH,
+		5, 2, (3200 / 5), (960 / 2),	//画像によって数値を変更すること
+		GAME_WIDTH / 2, GAME_HEIGHT / 2, TRUE, GetRect(0, 0, 0, 0)) == FALSE) {
+		return FALSE;
+	}
+
+	//エフェクト画像の読み込み
+	if (MY_IMAGE_LOAD_DIV_FILE(
+		&effectImage[2], IMAGE_WAZA2_DIV_PATH,
+		5, 2, (2400 / 5), (960 / 2),	//画像によって数値を変更すること
+		GAME_WIDTH / 2, GAME_HEIGHT / 2, TRUE, GetRect(0, 0, 0, 0)) == FALSE) {
+		return FALSE;
+	}
+
+	//エフェクト画像の読み込み
+	if (MY_IMAGE_LOAD_DIV_FILE(
+		&effectImage[3], IMAGE_WAZA3_DIV_PATH,
+		5, 2, (6400 / 5), (1920 / 2),	//画像によって数値を変更すること
 		GAME_WIDTH / 2, GAME_HEIGHT / 2, TRUE, GetRect(0, 0, 0, 0)) == FALSE) {
 		return FALSE;
 	}

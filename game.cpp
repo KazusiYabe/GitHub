@@ -118,6 +118,9 @@ BOOL EffectEndFlg = FALSE;	//エフェクトが終わった？
 
 BOOL IsNotEnoughMP = FALSE;		//MPは足りる？
 
+int encFeadPer = 0;
+BOOL encMoveFlg = FALSE;
+
 int processCnt = 0;
 int processCntMAX = GAME_FPS;
 
@@ -188,8 +191,15 @@ VOID MY_TITLE_INIT(VOID)
 	playerData.ATK = 1.0;
 	playerData.MP = 10;
 
-	//スライムのデータを固定
+	//敵のデータを固定
+	//スライム：slimeData
+	//ドラゴン：dragonData
 	tekiData = slimeData;
+
+	//敵の画像を設定
+	//スライム：slimeImage
+	//ドラゴン：dragonImage
+	tekiImage = dragonImage;
 
 	//ステータス系
 	HpBar = GetRect(wakuImage.pos.x + 60, statusHeight + 60, wakuImage.pos.x + 60 + HpBarMaxWidth, statusHeight + 60 + 60);
@@ -200,6 +210,10 @@ VOID MY_TITLE_INIT(VOID)
 	buttleCmd = attack;
 	wazaSelectCmd = 0;
 	wazaNo = 0;
+
+	//エンカウント系
+	encFeadPer = 0;
+	encMoveFlg = FALSE;
 
 	//技を設定
 	wazaTable[0] = SetWazaRecord(0, "ヒッカキ", 1, 0, 0, 0, effectImage[0]);
@@ -302,25 +316,21 @@ VOID MY_PLAY_PROC(VOID)
 	//フェードインしながら再生
 	FadeInPlayAudio(&NowPlayBGM, 1000);
 
-	////エンターキーでシーン遷移
-	//if (MY_KEY_CLICK(KEY_INPUT_RETURN) == TRUE)
-	//{
-	//	GameScene = GAME_SCENE_END;		//エンド画面へ
-	//	IsFadeIn = FALSE;				//フェードインはしない！
-	//	IsFadeOut = TRUE;				//フェードアウト開始！
-
-	//	return;
-	//}
-
 	//コマンド系の処理
 	switch (NowCommand)
 	{
 	case encounter:
-		if (MY_KEY_CLICK(KEY_INPUT_RETURN) == TRUE)
+
+		//敵が横に移動したら
+		if (encMoveFlg == TRUE)
 		{
-			PlayAudio(selectSE);
-			NowCommand = input;//次のコマンドへ
+			if (MY_KEY_CLICK(KEY_INPUT_RETURN) == TRUE)
+			{
+				PlayAudio(selectSE);
+				NowCommand = input;		//次のコマンドへ
+			}
 		}
+
 		break;
 	case input:
 		if (MY_KEY_CLICK(KEY_INPUT_UP) == TRUE)
@@ -507,14 +517,18 @@ VOID MY_PLAY_DRAW(VOID)
 	//ボス戦 ：playbossImage
 	DrawImage(playbossImage);
 
-	//スライムを描画
-	//ドラゴン：dragonImage
-	//スライム：slimeImage
-	DrawImage(dragonImage);
+	//輝度を段々と変更する(黒→元の色へ)
+	SetDrawBright(encFeadPer, encFeadPer, encFeadPer);
+
+	DrawImage(tekiImage);		//敵を描画
+
+	SetDrawBright(255, 255, 255);	//他の輝度には影響させない
 
 	//モンスターのステータス
 	DrawImage(wakuImage);
 	DrawStringToHandle(wakuImage.pos.x + 60, statusHeight, tekiData.Name, GetColor(255, 255, 255), fontMonster.handle);
+
+
 
 	//HPによってバーを縮める
 	HpBar.right = HpBar.left + ((float)tekiData.HP / tekiData.HPMAX) * HpBarMaxWidth;
@@ -551,8 +565,22 @@ VOID MY_PLAY_DRAW(VOID)
 	switch (NowCommand)
 	{
 	case encounter:
-		DrawStringToHandle(messageImage.pos.x + 10, messageImage.pos.y + 50, "なんと！モンスターに遭遇してしまった！！", GetColor(255, 255, 255), fontCommand.handle);
-		DrawStringToHandle(messageImage.pos.x + 10, messageImage.pos.y + 90, "どうやら戦うしかないようだ・・・！▼", GetColor(255, 255, 255), fontCommand.handle);
+
+		//敵を移動させる処理
+		if (encMoveFlg == FALSE)
+		{
+			encFeadPer += 5;
+			if (tekiImage.pos.x < GAME_WIDTH / 2 - tekiImage.pos.width / 2) { tekiImage.pos.x += 10; }
+			else { encMoveFlg = TRUE; }
+		}
+
+		//敵が現れてから・・・
+		if (encMoveFlg == TRUE)
+		{
+			DrawStringToHandle(messageImage.pos.x + 10, messageImage.pos.y + 50, "なんと！モンスターに遭遇してしまった！！", GetColor(255, 255, 255), fontCommand.handle);
+			DrawStringToHandle(messageImage.pos.x + 10, messageImage.pos.y + 90, "どうやら戦うしかないようだ・・・！▼", GetColor(255, 255, 255), fontCommand.handle);
+		}
+
 		break;
 	case input:
 
@@ -644,11 +672,11 @@ VOID MY_PLAY_DRAW(VOID)
 
 		if (buttleCmd == attack || buttleCmd == magic)
 		{
-			sprintfDx(ProcText, "%sに[%3d]アタックした！！", tekiData.Name, (int)ceil(playerData.ATK * wazaTable[wazaNo].ATK));
+			sprintfDx(ProcText, "%sに%3dのアタック！！", tekiData.Name, (int)ceil(playerData.ATK * wazaTable[wazaNo].ATK));
 		}
 		else if (buttleCmd == recovery)
 		{
-			sprintfDx(ProcText, "%sは[HP%3d/MP%3d]回復した", playerData.Name, wazaTable[wazaNo].HealHP, wazaTable[wazaNo].HealMP);
+			sprintfDx(ProcText, "%sは HP%3d / MP%3d 回復した", playerData.Name, wazaTable[wazaNo].HealHP, wazaTable[wazaNo].HealMP);
 		}
 		DrawFormatStringToHandle(messageImage.pos.x + 10, messageImage.pos.y + 50, GetColor(255, 255, 255), fontCommand.handle, ProcText);
 
