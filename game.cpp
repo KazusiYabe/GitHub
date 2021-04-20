@@ -39,6 +39,7 @@ struct WAZA_RECORD
 	int MP = -1;		//使うMPの量
 	int HealHP = -1;	//HP回復量
 	int HealMP = -1;	//MP回復量
+	DIVIMAGE effect;	//エフェクトの絵
 };	//技レコード用
 
 enum COMMAND
@@ -98,20 +99,7 @@ CHARACTOR_DATA tekiData;
 CHARACTOR_DATA playerData;
 
 //技テーブルデータ
-WAZA_RECORD wazaTable[WAZA_MAX]{
-	{0,"ヒッカキ"		,1,		0,		0,		0},
-	{1,"キリツケ"		,1,		0,		0,		0},
-	{2,"ハサミ"			,2,		0,		0,		0},
-	{3,"スラッシュ"		,3,		0,		0,		0},
-	{4,"アイシクル"		,5,		10,		0,		0},
-	{5,"雷撃"			,5,		10,		0,		0},
-	{6,"カエンビーーム"	,20,	20,		0,		0},
-	{7,"トリプルソード"	,30,	30,		0,		0},
-	{8,"いやしの風"		,0,		5,		5,		0},
-	{9,"いやしの雨"		,0,		5,		0,		5},
-	{10,"アースヒール"	,0,		30,		30,		30},
-	{11,"聖なる光"		,0,		50,	   100,	   100}
-};
+WAZA_RECORD wazaTable[WAZA_MAX];
 
 //ステータスの表示系
 int statusHeight = 40;
@@ -130,15 +118,34 @@ BOOL EffectEndFlg = FALSE;	//エフェクトが終わった？
 
 BOOL IsNotEnoughMP = FALSE;		//MPは足りる？
 
+int processCnt = 0;
+int processCntMAX = GAME_FPS;
+
 int damageCnt = 0;
-int damageCntMAX = 60;
+int damageCntMAX = GAME_FPS * 1.5;
 BOOL damageProcFlg = FALSE;	//ダメージ処理を行ったか？
 
 //########## 関数のプロトタイプ宣言 ##########
 
 VOID DrawPushEnter(VOID);	//PUSH ENTERを描画
+WAZA_RECORD SetWazaRecord(int no, const char* Name, int ATK, int MP, int HealHP, int HealMP, DIVIMAGE effect);	//技レコード設定
 
 //########## ゲーム処理の関数 ##########
+
+//技レコード設定
+WAZA_RECORD SetWazaRecord(int no, const char* Name, int ATK, int MP, int HealHP, int HealMP, DIVIMAGE effect)
+{
+	WAZA_RECORD waza;
+	waza.No = no;
+	strcpyDx(waza.Name, Name);
+	waza.ATK = ATK;
+	waza.MP = MP;
+	waza.HealHP = HealHP;
+	waza.HealMP = HealMP;
+	waza.effect = effect;
+
+	return waza;	//設定した技を入れる
+}
 
 //ゲームタイトル初期化
 VOID MY_TITLE_INIT(VOID)
@@ -193,6 +200,20 @@ VOID MY_TITLE_INIT(VOID)
 	buttleCmd = attack;
 	wazaSelectCmd = 0;
 	wazaNo = 0;
+
+	//技を設定
+	wazaTable[0] = SetWazaRecord(0, "ヒッカキ", 1, 0, 0, 0, effectImage[0]);
+	wazaTable[1] = SetWazaRecord(1, "キリツケ", 1, 0, 0, 0, effectImage[1]);
+	wazaTable[2] = SetWazaRecord(2, "ハサミ", 2, 0, 0, 0, effectImage[2]);
+	wazaTable[3] = SetWazaRecord(3, "スラッシュ", 3, 0, 0, 0, effectImage[3]);
+	wazaTable[4] = SetWazaRecord(4, "アイシクル", 5, 10, 0, 0, effectImage[4]);
+	wazaTable[5] = SetWazaRecord(5, "雷撃", 5, 10, 0, 0, effectImage[5]);
+	wazaTable[6] = SetWazaRecord(6, "カエンビーーム", 20, 20, 0, 0, effectImage[6]);
+	wazaTable[7] = SetWazaRecord(7, "トリプルソード", 30, 30, 0, 0, effectImage[7]);
+	wazaTable[8] = SetWazaRecord(8, "いやしの風", 0, 5, 5, 0, effectImage[8]);
+	wazaTable[9] = SetWazaRecord(9, "天使の輪", 0, 5, 0, 5, effectImage[9]);
+	wazaTable[10] = SetWazaRecord(10, "アースヒール", 0, 30, 30, 30, effectImage[10]);
+	wazaTable[11] = SetWazaRecord(11, "聖なる光", 0, 50, 100, 100, effectImage[11]);
 
 	GameScene = GAME_SCENE_TITLE;	//ゲームシーンはタイトル画面から
 
@@ -382,7 +403,9 @@ VOID MY_PLAY_PROC(VOID)
 
 			PlayAudio(selectSE);
 			ProcCmdFlg = FALSE;		//技の説明をする
+			EffectEndFlg = FALSE;	//エフェクト描画未処理
 			NowCommand = process;	//次のコマンドへ
+			processCnt = 0;
 
 		}
 
@@ -406,10 +429,12 @@ VOID MY_PLAY_PROC(VOID)
 		//MPが足りていれば
 		if (IsNotEnoughMP == FALSE)
 		{
-			if (MY_KEY_CLICK(KEY_INPUT_RETURN) == TRUE)
+			//自動で次のコマンドへ
+			if (processCnt < processCntMAX) { processCnt++; }
+			else
 			{
-				ProcCmdFlg = TRUE;
-				EffectEndFlg = FALSE;
+				ProcCmdFlg = TRUE;		//コマンド描画終了
+				wazaTable[wazaNo].effect.IsDraw = TRUE;	//エフェクト描画
 			}
 		}
 
@@ -598,14 +623,15 @@ VOID MY_PLAY_DRAW(VOID)
 				sprintfDx(ProcText, "%sは%sを祈った！", playerData.Name, wazaTable[wazaNo].Name);
 			}
 
-
-			EffectEndFlg = TRUE;
-			//エフェクト描画
-			if (EffectEndFlg == TRUE)
+			//エフェクトを描画しても良いとき
+			if (ProcCmdFlg == TRUE)
 			{
-
+				DrawDivImage(&wazaTable[wazaNo].effect);
+				if (wazaTable[wazaNo].effect.IsDraw == FALSE)
+				{
+					EffectEndFlg = TRUE;	//エフェクト描画終了
+				}
 			}
-
 		}
 		else
 		{

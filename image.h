@@ -49,7 +49,22 @@
 
 #define IMAGE_DIV_MAX				256			//ハンドルの最大数(任意)
 
-#define IMAGE_SAMPLE_DIV_PATH		TEXT(".\\IMAGE\\EFFECT\\hikkaku.png")	//サンプルのパス
+#define EFFECT_MAX	12
+
+#define IMAGE_WAZA0_DIV_PATH		TEXT(".\\IMAGE\\EFFECT\\hikkaku.png")	//サンプルのパス
+#define IMAGE_WAZA1_DIV_PATH		TEXT(".\\IMAGE\\EFFECT\\slash.png")	//サンプルのパス
+#define IMAGE_WAZA2_DIV_PATH		TEXT(".\\IMAGE\\EFFECT\\kamituku.png")	//サンプルのパス
+#define IMAGE_WAZA3_DIV_PATH		TEXT(".\\IMAGE\\EFFECT\\slash.png")	//サンプルのパス
+
+#define IMAGE_WAZA4_DIV_PATH		TEXT(".\\IMAGE\\EFFECT\\ice.png")	//サンプルのパス
+#define IMAGE_WAZA5_DIV_PATH		TEXT(".\\IMAGE\\EFFECT\\raigeki.png")	//サンプルのパス
+#define IMAGE_WAZA6_DIV_PATH		TEXT(".\\IMAGE\\EFFECT\\ken.png")	//サンプルのパス
+#define IMAGE_WAZA7_DIV_PATH		TEXT(".\\IMAGE\\EFFECT\\kaenbeam.png")	//サンプルのパス
+
+#define IMAGE_WAZA8_DIV_PATH		TEXT(".\\IMAGE\\EFFECT\\pipo-btleffect043.png")	//サンプルのパス
+#define IMAGE_WAZA9_DIV_PATH		TEXT(".\\IMAGE\\EFFECT\\pipo-btleffect044.png")	//サンプルのパス
+#define IMAGE_WAZA10_DIV_PATH		TEXT(".\\IMAGE\\EFFECT\\pipo-btleffect045.png")	//サンプルのパス
+#define IMAGE_WAZA11_DIV_PATH		TEXT(".\\IMAGE\\EFFECT\\pipo-btleffect046.png")	//サンプルのパス
 
 //########## 構造体 ##########
 
@@ -118,7 +133,7 @@ extern IMAGE titleLogo;			//タイトルロゴ画像
 extern IMAGE wakuImage;			//モンスター枠画像
 extern IMAGE messageImage;			//メッセージ枠画像
 
-extern DIVIMAGE sampleDivImage;	//サンプル分割画像
+extern DIVIMAGE effectImage[EFFECT_MAX];	//エフェクト分割画像
 
 //########## プロトタイプ宣言 ##########
 //※extern は、外部に関数がありますよ！という目印でつけています。

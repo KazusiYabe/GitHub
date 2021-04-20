@@ -33,7 +33,7 @@ IMAGE titleLogo;			//タイトルロゴ画像
 IMAGE wakuImage;			//モンスター枠画像
 IMAGE messageImage;				//メッセージ枠画像
 
-DIVIMAGE sampleDivImage;	//サンプル分割画像
+DIVIMAGE effectImage[EFFECT_MAX];	//エフェクト分割画像
 
 //########## 関数 ##########
 
@@ -80,7 +80,7 @@ BOOL MY_IMAGE_LOAD(VOID)
 
 	//サンプル分割画像の読み込み
 	if (MY_IMAGE_LOAD_DIV_FILE(
-		&sampleDivImage, IMAGE_SAMPLE_DIV_PATH,
+		&effectImage[0], IMAGE_WAZA0_DIV_PATH,
 		5, 2, (1200 / 5), (480 / 2),	//画像によって数値を変更すること（サンプルは、縦に５列、横に２行、幅240、高さ240という意味）
 		GAME_WIDTH / 2, GAME_HEIGHT / 2, TRUE, GetRect(0, 0, 0, 0)) == FALSE) {
 		return FALSE;
@@ -314,7 +314,10 @@ VOID MY_IMAGE_DELETE(VOID)
 	DeleteGraph(wakuImage.handle);
 	DeleteGraph(messageImage.handle);
 
-	for (int i = 0; i < sampleDivImage.DivMax; i++) { DeleteGraph(sampleDivImage.handle[i]); };
+	for (int cnt = 0; cnt < EFFECT_MAX; cnt++)
+	{
+		for (int i = 0; i < effectImage[cnt].DivMax; i++) { DeleteGraph(effectImage[0].handle[i]); };
+	}
 
 	//他の画像もココで削除すること
 
