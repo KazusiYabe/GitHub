@@ -29,6 +29,7 @@ struct CHARACTOR_DATA
 	int HPMAX = 0;		//体力(MAX)
 	float ATK = 1.0;	//攻撃力
 	int MP = 0;			//ＭＰ
+	int MPMAX = 0;		//ＭＰ(MAX)
 };//モンスターのデータ
 
 struct WAZA_RECORD
@@ -103,9 +104,17 @@ WAZA_RECORD wazaTable[WAZA_MAX];
 
 //ステータスの表示系
 int statusHeight = 40;
-int HpBarMaxWidth = 650;
-RECT HpBar;
-RECT HpBarWaku;
+int TekiHpBarMaxWidth = 650;
+RECT TekiHpBar;
+RECT TekiHpBarWaku;
+
+int PlayerHpBarMaxWidth = 400;
+RECT PlayerHpBar;
+RECT PlayerHpBarWaku;
+
+int PlayerMpBarMaxWidth = 400;
+RECT PlayerMpBar;
+RECT PlayerMpBarWaku;
 
 //コマンド系
 int NowCommand = encounter;
@@ -176,21 +185,24 @@ VOID MY_TITLE_INIT(VOID)
 	dragonData.HPMAX = 100;
 	dragonData.HP = dragonData.HPMAX;
 	dragonData.ATK = 3.0;
-	dragonData.MP = 50;
+	dragonData.MPMAX = 50;
+	dragonData.MP = dragonData.MPMAX;
 
 	//スライム
 	strcpy_sDx(slimeData.Name, STR_MAX, "ハマミースライム");
 	slimeData.HPMAX = 10;
 	slimeData.HP = slimeData.HPMAX;
 	slimeData.ATK = 1.0;
-	slimeData.MP = 5;
+	slimeData.MPMAX = 5;
+	slimeData.MP = slimeData.MPMAX;
 
 	//プレイヤー
 	strcpy_sDx(playerData.Name, STR_MAX, "冒険者ブレイブ");
 	playerData.HPMAX = 20;
-	playerData.HP = slimeData.HPMAX;
+	playerData.HP = playerData.HPMAX;
 	playerData.ATK = 1.0;
-	playerData.MP = 10;
+	playerData.MPMAX = 20;
+	playerData.MP = playerData.MPMAX;
 
 	//敵のデータを固定
 	//スライム：slimeData
@@ -203,8 +215,22 @@ VOID MY_TITLE_INIT(VOID)
 	tekiImage = dragonImage;
 
 	//ステータス系
-	HpBar = GetRect(wakuImage.pos.x + 60, statusHeight + 60, wakuImage.pos.x + 60 + HpBarMaxWidth, statusHeight + 60 + 60);
-	HpBarWaku = HpBar;
+	TekiHpBar = GetRect(wakuImage.pos.x + 60, statusHeight + 60, wakuImage.pos.x + 60 + TekiHpBarMaxWidth, statusHeight + 60 + 60);
+	TekiHpBarWaku = TekiHpBar;
+
+	PlayerHpBar = GetRect(
+		messageImage.pos.x + messageImage.pos.width + 20,
+		600 ,
+		messageImage.pos.x + messageImage.pos.width + 20 + PlayerHpBarMaxWidth,
+		600 + statusHeight);
+	PlayerHpBarWaku = PlayerHpBar;
+
+	PlayerMpBar = GetRect(
+		messageImage.pos.x + messageImage.pos.width + 20,
+		650,
+		messageImage.pos.x + messageImage.pos.width + 20 + PlayerMpBarMaxWidth,
+		650 + statusHeight);
+	PlayerMpBarWaku = PlayerMpBar;
 
 	//コマンド系
 	NowCommand = encounter;
@@ -515,7 +541,32 @@ VOID DrawPlayerStatus(VOID)
 	DrawImage(messageImage);
 	//プレイヤー名前描画
 	DrawStringToHandle(messageImage.pos.x + 5, messageImage.pos.y + 10, playerData.Name, GetColor(255, 255, 255), fontPlayer.handle);
-	
+
+	//HPによってバーを縮める
+	PlayerHpBar.right = PlayerHpBar.left + ((float)playerData.HP / playerData.HPMAX) * PlayerHpBarMaxWidth;
+	if (PlayerHpBar.right < PlayerHpBar.left) { PlayerHpBar.right = PlayerHpBar.left; }	//HPバーを超えないように
+
+	//HPバーの色を変える
+	if (playerData.HP < playerData.HPMAX / 8) { DrawRect(PlayerHpBar, GetColor(204, 75, 49), TRUE); }
+	else if (playerData.HP < playerData.HPMAX / 4) { DrawRect(PlayerHpBar, GetColor(204, 178, 49), TRUE); }
+	else { DrawRect(PlayerHpBar, GetColor(49, 204, 49), TRUE); }
+	DrawRect(PlayerHpBarWaku, GetColor(255, 255, 255), FALSE);
+	//HPの数値を表示
+	DrawFormatStringToHandle(PlayerHpBarWaku.left + 10, PlayerHpBarWaku.top, GetColor(255, 255, 255), fontCommand.handle, "HP：%5d/%5d", playerData.HP, playerData.HPMAX);
+
+	//MPによってバーを縮める
+	PlayerMpBar.right = PlayerMpBar.left + ((float)playerData.MP / playerData.MPMAX) * PlayerMpBarMaxWidth;
+	if (PlayerMpBar.right < PlayerMpBar.left) { PlayerMpBar.right = PlayerMpBar.left; }	//Mpバーを超えないように
+
+	//MPバーの色を変える
+	if (playerData.MP < playerData.MPMAX / 8) { DrawRect(PlayerMpBar, GetColor(204, 75, 49), TRUE); }
+	else if (playerData.MP < playerData.MPMAX / 4) { DrawRect(PlayerMpBar, GetColor(204, 178, 49), TRUE); }
+	else { DrawRect(PlayerMpBar, GetColor(0, 35, 212), TRUE); }
+	DrawRect(PlayerMpBarWaku, GetColor(255, 255, 255), FALSE);
+	//MPの数値を表示
+	DrawFormatStringToHandle(PlayerMpBarWaku.left + 10, PlayerMpBarWaku.top, GetColor(255, 255, 255), fontCommand.handle, "MP：%5d/%5d", playerData.MP, playerData.MPMAX);
+
+
 	return;
 }
 
@@ -687,14 +738,14 @@ VOID MY_PLAY_DRAW(VOID)
 	DrawStringToHandle(wakuImage.pos.x + 60, statusHeight, tekiData.Name, GetColor(255, 255, 255), fontMonster.handle);
 
 	//HPによってバーを縮める
-	HpBar.right = HpBar.left + ((float)tekiData.HP / tekiData.HPMAX) * HpBarMaxWidth;
-	if (HpBar.right < HpBar.left) { HpBar.right = HpBar.left; }	//HPバーを超えないように
+	TekiHpBar.right = TekiHpBar.left + ((float)tekiData.HP / tekiData.HPMAX) * TekiHpBarMaxWidth;
+	if (TekiHpBar.right < TekiHpBar.left) { TekiHpBar.right = TekiHpBar.left; }	//HPバーを超えないように
 
 	//HPバーの色を変える
-	if (tekiData.HP < tekiData.HPMAX / 8) { DrawRect(HpBar, GetColor(204, 75, 49), TRUE); }
-	else if (tekiData.HP < tekiData.HPMAX / 4) { DrawRect(HpBar, GetColor(204, 178, 49), TRUE); }
-	else { DrawRect(HpBar, GetColor(49, 204, 49), TRUE); }
-	DrawRect(HpBarWaku, GetColor(255, 255, 255), FALSE);
+	if (tekiData.HP < tekiData.HPMAX / 8) { DrawRect(TekiHpBar, GetColor(204, 75, 49), TRUE); }
+	else if (tekiData.HP < tekiData.HPMAX / 4) { DrawRect(TekiHpBar, GetColor(204, 178, 49), TRUE); }
+	else { DrawRect(TekiHpBar, GetColor(49, 204, 49), TRUE); }
+	DrawRect(TekiHpBarWaku, GetColor(255, 255, 255), FALSE);
 	//HPの数値を表示
 	DrawFormatStringToHandle(wakuImage.pos.x + 80, statusHeight + 60, GetColor(255, 255, 255), fontMonster.handle, "HP：%5d/%5d", tekiData.HP, tekiData.HPMAX);
 
