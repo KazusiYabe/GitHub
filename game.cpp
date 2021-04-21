@@ -189,7 +189,7 @@ VOID MY_TITLE_INIT(VOID)
 	playerData.HPMAX = 20;
 	playerData.HP = slimeData.HPMAX;
 	playerData.ATK = 1.0;
-	playerData.MP = 10;
+	playerData.MP = 500;
 
 	//敵のデータを固定
 	//スライム：slimeData

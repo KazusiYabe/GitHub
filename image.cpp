@@ -111,6 +111,69 @@ BOOL MY_IMAGE_LOAD(VOID)
 		return FALSE;
 	}
 
+	//エフェクト画像の読み込み
+	if (MY_IMAGE_LOAD_DIV_FILE(
+		&effectImage[4], IMAGE_WAZA4_DIV_PATH,
+		5, 2, (2000 / 5), (800 / 2),	//画像によって数値を変更すること
+		GAME_WIDTH / 2, GAME_HEIGHT / 2, TRUE, GetRect(0, 0, 0, 0)) == FALSE) {
+		return FALSE;
+	}
+
+	//エフェクト画像の読み込み
+	if (MY_IMAGE_LOAD_DIV_FILE(
+		&effectImage[5], IMAGE_WAZA5_DIV_PATH,
+		5, 2, (2000 / 5), (800 / 2),	//画像によって数値を変更すること
+		GAME_WIDTH / 2, GAME_HEIGHT / 2, TRUE, GetRect(0, 0, 0, 0)) == FALSE) {
+		return FALSE;
+	}
+
+	//エフェクト画像の読み込み
+	if (MY_IMAGE_LOAD_DIV_FILE(
+		&effectImage[6], IMAGE_WAZA6_DIV_PATH,
+		2, 10, (1280 / 2), (4800 / 10),	//画像によって数値を変更すること
+		GAME_WIDTH / 2, GAME_HEIGHT / 2, TRUE, GetRect(0, 0, 0, 0)) == FALSE) {
+		return FALSE;
+	}
+
+	//エフェクト画像の読み込み
+	if (MY_IMAGE_LOAD_DIV_FILE(
+		&effectImage[7], IMAGE_WAZA7_DIV_PATH,
+		1, 16, (640 / 1), (7680 / 16),	//画像によって数値を変更すること
+		GAME_WIDTH / 2, GAME_HEIGHT / 2, TRUE, GetRect(0, 0, 0, 0)) == FALSE) {
+		return FALSE;
+	}
+
+	//エフェクト画像の読み込み
+	if (MY_IMAGE_LOAD_DIV_FILE(
+		&effectImage[8], IMAGE_WAZA8_DIV_PATH,
+		9, 1, (2160 / 9), (240 / 1),	//画像によって数値を変更すること
+		GAME_WIDTH / 2, GAME_HEIGHT / 2, TRUE, GetRect(0, 0, 0, 0)) == FALSE) {
+		return FALSE;
+	}
+
+	//エフェクト画像の読み込み
+	if (MY_IMAGE_LOAD_DIV_FILE(
+		&effectImage[9], IMAGE_WAZA9_DIV_PATH,
+		9, 1, (2160 / 9), (240 / 1),	//画像によって数値を変更すること
+		GAME_WIDTH / 2, GAME_HEIGHT / 2, TRUE, GetRect(0, 0, 0, 0)) == FALSE) {
+		return FALSE;
+	}
+
+	//エフェクト画像の読み込み
+	if (MY_IMAGE_LOAD_DIV_FILE(
+		&effectImage[10], IMAGE_WAZA10_DIV_PATH,
+		9, 1, (2160 / 9), (240 / 1),	//画像によって数値を変更すること
+		GAME_WIDTH / 2, GAME_HEIGHT / 2, TRUE, GetRect(0, 0, 0, 0)) == FALSE) {
+		return FALSE;
+	}
+
+	//エフェクト画像の読み込み
+	if (MY_IMAGE_LOAD_DIV_FILE(
+		&effectImage[11], IMAGE_WAZA11_DIV_PATH,
+		5, 2, (1920 / 5), (768 / 2),	//画像によって数値を変更すること
+		GAME_WIDTH / 2, GAME_HEIGHT / 2, TRUE, GetRect(0, 0, 0, 0)) == FALSE) {
+		return FALSE;
+	}
 
 	//他の画像もココで読み込むこと
 

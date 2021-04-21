@@ -51,20 +51,20 @@
 
 #define EFFECT_MAX	12
 
-#define IMAGE_WAZA0_DIV_PATH		TEXT(".\\IMAGE\\EFFECT\\hikkaku.png")	//サンプルのパス
-#define IMAGE_WAZA1_DIV_PATH		TEXT(".\\IMAGE\\EFFECT\\slash.png")	//サンプルのパス
-#define IMAGE_WAZA2_DIV_PATH		TEXT(".\\IMAGE\\EFFECT\\kamituku.png")	//サンプルのパス
-#define IMAGE_WAZA3_DIV_PATH		TEXT(".\\IMAGE\\EFFECT\\slash2.png")	//サンプルのパス
+#define IMAGE_WAZA0_DIV_PATH		TEXT(".\\IMAGE\\EFFECT\\hikkaku.png")	
+#define IMAGE_WAZA1_DIV_PATH		TEXT(".\\IMAGE\\EFFECT\\slash.png")
+#define IMAGE_WAZA2_DIV_PATH		TEXT(".\\IMAGE\\EFFECT\\kamituku.png")	
+#define IMAGE_WAZA3_DIV_PATH		TEXT(".\\IMAGE\\EFFECT\\slash2.png")	
 
-#define IMAGE_WAZA4_DIV_PATH		TEXT(".\\IMAGE\\EFFECT\\ice.png")	//サンプルのパス
-#define IMAGE_WAZA5_DIV_PATH		TEXT(".\\IMAGE\\EFFECT\\raigeki.png")	//サンプルのパス
-#define IMAGE_WAZA6_DIV_PATH		TEXT(".\\IMAGE\\EFFECT\\ken.png")	//サンプルのパス
-#define IMAGE_WAZA7_DIV_PATH		TEXT(".\\IMAGE\\EFFECT\\kaenbeam.png")	//サンプルのパス
+#define IMAGE_WAZA4_DIV_PATH		TEXT(".\\IMAGE\\EFFECT\\ice.png")	
+#define IMAGE_WAZA5_DIV_PATH		TEXT(".\\IMAGE\\EFFECT\\raigeki.png")	
+#define IMAGE_WAZA6_DIV_PATH		TEXT(".\\IMAGE\\EFFECT\\kaenbeam.png")
+#define IMAGE_WAZA7_DIV_PATH		TEXT(".\\IMAGE\\EFFECT\\ken.png")	
 
-#define IMAGE_WAZA8_DIV_PATH		TEXT(".\\IMAGE\\EFFECT\\pipo-btleffect043.png")	//サンプルのパス
-#define IMAGE_WAZA9_DIV_PATH		TEXT(".\\IMAGE\\EFFECT\\pipo-btleffect044.png")	//サンプルのパス
-#define IMAGE_WAZA10_DIV_PATH		TEXT(".\\IMAGE\\EFFECT\\pipo-btleffect045.png")	//サンプルのパス
-#define IMAGE_WAZA11_DIV_PATH		TEXT(".\\IMAGE\\EFFECT\\pipo-btleffect046.png")	//サンプルのパス
+#define IMAGE_WAZA8_DIV_PATH		TEXT(".\\IMAGE\\EFFECT\\pipo-btleffect043.png")
+#define IMAGE_WAZA9_DIV_PATH		TEXT(".\\IMAGE\\EFFECT\\pipo-btleffect044.png")	
+#define IMAGE_WAZA10_DIV_PATH		TEXT(".\\IMAGE\\EFFECT\\pipo-btleffect045.png")
+#define IMAGE_WAZA11_DIV_PATH		TEXT(".\\IMAGE\\EFFECT\\kaihuku.png")	
 
 //########## 構造体 ##########
 
@@ -85,7 +85,7 @@ struct IMAGE
 {
 	int handle = -1;		//画像ハンドル
 	char path[PATH_MAX];	//パス
-	
+
 	POSTION pos;			//位置と幅高さ、当たり判定
 
 	BOOL IsDraw = FALSE;	//描画できるか？
@@ -106,7 +106,7 @@ struct DIVIMAGE
 	BOOL IsCenter = FALSE;			//XY位置を中心に描画するか？
 
 	int AnimCnt = 0;				//アニメーションカウンタ
-	int AnimCntMAX = 2;				//アニメーションカウンタMAX
+	int AnimCntMAX = 4;				//アニメーションカウンタMAX
 	BOOL IsAnimLoop = FALSE;		//アニメーションをループさせるか？
 };
 
