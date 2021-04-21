@@ -75,8 +75,8 @@ BOOL MY_IMAGE_LOAD(VOID)
 	if (MY_IMAGE_LOAD_FILE(&titleLogo, IMAGE_TITLE_LOGO_PATH, GAME_WIDTH / 2, GAME_HEIGHT / 3 * 1, TRUE, GetRect(0, 0, 0, 0)) == FALSE) { return FALSE; }
 	//モンスター枠画像の読み込み
 	if (MY_IMAGE_LOAD_FILE(&wakuImage, IMAGE_WAKU_PATH, GAME_WIDTH / 2, 100, TRUE, GetRect(0, 0, 0, 0)) == FALSE) { return FALSE; }
-	//モンスター枠画像の読み込み
-	if (MY_IMAGE_LOAD_FILE(&messageImage, IMAGE_MESSAGE_PATH, GAME_WIDTH / 2, GAME_HEIGHT - 100, TRUE, GetRect(0, 0, 0, 0)) == FALSE) { return FALSE; }
+	//プレイヤー枠画像の読み込み
+	if (MY_IMAGE_LOAD_FILE(&messageImage, IMAGE_MESSAGE_PATH, 450, GAME_HEIGHT - 100, TRUE, GetRect(0, 0, 0, 0)) == FALSE) { return FALSE; }
 
 
 	//エフェクト画像の読み込み

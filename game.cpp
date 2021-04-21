@@ -130,7 +130,8 @@ BOOL damageProcFlg = FALSE;	//ダメージ処理を行ったか？
 
 //########## 関数のプロトタイプ宣言 ##########
 
-VOID DrawPushEnter(VOID);	//PUSH ENTERを描画
+VOID DrawPushEnter(VOID);		//PUSH ENTERを描画
+VOID DrawPlayerStatus(VOID);	//プレイヤーのステータスを描画
 WAZA_RECORD SetWazaRecord(int no, const char* Name, int ATK, int MP, int HealHP, int HealMP, DIVIMAGE effect);	//技レコード設定
 
 //########## ゲーム処理の関数 ##########
@@ -189,7 +190,7 @@ VOID MY_TITLE_INIT(VOID)
 	playerData.HPMAX = 20;
 	playerData.HP = slimeData.HPMAX;
 	playerData.ATK = 1.0;
-	playerData.MP = 500;
+	playerData.MP = 10;
 
 	//敵のデータを固定
 	//スライム：slimeData
@@ -507,6 +508,17 @@ VOID MY_PLAY_PROC(VOID)
 	return;
 }
 
+//プレイヤーのステータスを描画
+VOID DrawPlayerStatus(VOID)
+{
+	//メッセージ枠描画
+	DrawImage(messageImage);
+	//プレイヤー名前描画
+	DrawStringToHandle(messageImage.pos.x + 5, messageImage.pos.y + 10, playerData.Name, GetColor(255, 255, 255), fontPlayer.handle);
+	
+	return;
+}
+
 //プレイ画面の描画
 VOID MY_PLAY_DRAW(VOID)
 {
@@ -523,29 +535,6 @@ VOID MY_PLAY_DRAW(VOID)
 	DrawImage(tekiImage);		//敵を描画
 
 	SetDrawBright(255, 255, 255);	//他の輝度には影響させない
-
-	//モンスターのステータス
-	DrawImage(wakuImage);
-	DrawStringToHandle(wakuImage.pos.x + 60, statusHeight, tekiData.Name, GetColor(255, 255, 255), fontMonster.handle);
-
-
-
-	//HPによってバーを縮める
-	HpBar.right = HpBar.left + ((float)tekiData.HP / tekiData.HPMAX) * HpBarMaxWidth;
-	if (HpBar.right < HpBar.left) { HpBar.right = HpBar.left; }	//HPバーを超えないように
-
-	//HPバーの色を変える
-	if (tekiData.HP < tekiData.HPMAX / 8) { DrawRect(HpBar, GetColor(204, 75, 49), TRUE); }
-	else if (tekiData.HP < tekiData.HPMAX / 4) { DrawRect(HpBar, GetColor(204, 178, 49), TRUE); }
-	else { DrawRect(HpBar, GetColor(49, 204, 49), TRUE); }
-	DrawRect(HpBarWaku, GetColor(255, 255, 255), FALSE);
-	//HPの数値を表示
-	DrawFormatStringToHandle(wakuImage.pos.x + 80, statusHeight + 60, GetColor(255, 255, 255), fontMonster.handle, "HP：%5d/%5d", tekiData.HP, tekiData.HPMAX);
-
-	//メッセージ枠描画
-	DrawImage(messageImage);
-	//プレイヤー名前描画
-	DrawStringToHandle(messageImage.pos.x + 5, messageImage.pos.y + 10, playerData.Name, GetColor(255, 255, 255), fontPlayer.handle);
 
 	unsigned int selectColor = GetColor(245, 245, 245);
 	unsigned int notselectColor = GetColor(102, 102, 102);
@@ -577,6 +566,7 @@ VOID MY_PLAY_DRAW(VOID)
 		//敵が現れてから・・・
 		if (encMoveFlg == TRUE)
 		{
+			DrawPlayerStatus();	//プレイヤーのステータス描画
 			DrawStringToHandle(messageImage.pos.x + 10, messageImage.pos.y + 50, "なんと！モンスターに遭遇してしまった！！", GetColor(255, 255, 255), fontCommand.handle);
 			DrawStringToHandle(messageImage.pos.x + 10, messageImage.pos.y + 90, "どうやら戦うしかないようだ・・・！▼", GetColor(255, 255, 255), fontCommand.handle);
 		}
@@ -584,6 +574,7 @@ VOID MY_PLAY_DRAW(VOID)
 		break;
 	case input:
 
+		DrawPlayerStatus();	//プレイヤーのステータス描画
 		if (buttleCmd == attack) { kougekiColor = selectColor; }
 		else if (buttleCmd == magic) { mahouColor = selectColor; }
 		else if (buttleCmd == recovery) { kaihukuColor = selectColor; }
@@ -594,6 +585,8 @@ VOID MY_PLAY_DRAW(VOID)
 		break;
 
 	case waza:
+
+		DrawPlayerStatus();	//プレイヤーのステータス描画
 
 		//入力のコマンドはそのまま描画中
 		if (buttleCmd == attack) { kougekiColor = selectColor; }
@@ -638,6 +631,8 @@ VOID MY_PLAY_DRAW(VOID)
 
 		if (IsNotEnoughMP == FALSE)
 		{
+			DrawPlayerStatus();	//プレイヤーのステータス描画
+
 			if (buttleCmd == attack)
 			{
 				sprintfDx(ProcText, "%sは%s攻撃した！", playerData.Name, wazaTable[wazaNo].Name);
@@ -659,16 +654,20 @@ VOID MY_PLAY_DRAW(VOID)
 				{
 					EffectEndFlg = TRUE;	//エフェクト描画終了
 				}
+				DrawPlayerStatus();	//プレイヤーのステータス描画
 			}
 		}
 		else
 		{
+			DrawPlayerStatus();	//プレイヤーのステータス描画
 			sprintfDx(ProcText, "MPが足りない...技を選び直さねば...");
 		}
 		DrawFormatStringToHandle(messageImage.pos.x + 10, messageImage.pos.y + 50, GetColor(255, 255, 255), fontCommand.handle, ProcText);
 
 		break;
 	case damage:
+
+		DrawPlayerStatus();	//プレイヤーのステータス描画
 
 		if (buttleCmd == attack || buttleCmd == magic)
 		{
@@ -682,6 +681,22 @@ VOID MY_PLAY_DRAW(VOID)
 
 		break;
 	}
+
+	//モンスターのステータス
+	DrawImage(wakuImage);
+	DrawStringToHandle(wakuImage.pos.x + 60, statusHeight, tekiData.Name, GetColor(255, 255, 255), fontMonster.handle);
+
+	//HPによってバーを縮める
+	HpBar.right = HpBar.left + ((float)tekiData.HP / tekiData.HPMAX) * HpBarMaxWidth;
+	if (HpBar.right < HpBar.left) { HpBar.right = HpBar.left; }	//HPバーを超えないように
+
+	//HPバーの色を変える
+	if (tekiData.HP < tekiData.HPMAX / 8) { DrawRect(HpBar, GetColor(204, 75, 49), TRUE); }
+	else if (tekiData.HP < tekiData.HPMAX / 4) { DrawRect(HpBar, GetColor(204, 178, 49), TRUE); }
+	else { DrawRect(HpBar, GetColor(49, 204, 49), TRUE); }
+	DrawRect(HpBarWaku, GetColor(255, 255, 255), FALSE);
+	//HPの数値を表示
+	DrawFormatStringToHandle(wakuImage.pos.x + 80, statusHeight + 60, GetColor(255, 255, 255), fontMonster.handle, "HP：%5d/%5d", tekiData.HP, tekiData.HPMAX);
 
 	DrawString(0, 0, "プレイ画面", GetColor(255, 255, 255));
 	return;
