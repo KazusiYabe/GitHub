@@ -199,25 +199,25 @@ VOID MY_TITLE_INIT(VOID)
 	slimeData.MPMAX = 5;
 	slimeData.MP = slimeData.MPMAX;
 
-	//プレイヤー
-	strcpy_sDx(playerData.Name, STR_MAX, "冒険者ブレイブ");
-	playerData.HPMAX = 20;
-	playerData.HP = playerData.HPMAX;
-	playerData.ATK = 1.0;
-	playerData.MPMAX = 20;
-	playerData.MP = playerData.MPMAX;
+//プレイヤー
+strcpy_sDx(playerData.Name, STR_MAX, "冒険者ブレイブ");
+playerData.HPMAX = 20;
+playerData.HP = playerData.HPMAX;
+playerData.ATK = 1.0;
+playerData.MPMAX = 20;
+playerData.MP = playerData.MPMAX;
 
 	//＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊
 
-	//敵のデータを固定
-	//スライム：slimeData
-	//ドラゴン：dragonData
-	tekiData = slimeData;
+//敵のデータを固定
+//スライム：slimeData
+//ドラゴン：dragonData
+tekiData = slimeData;
 
-	//敵の画像を設定
-	//スライム：slimeImage
-	//ドラゴン：dragonImage
-	tekiImage = dragonImage;
+//敵の画像を設定
+//スライム：slimeImage
+//ドラゴン：dragonImage
+tekiImage = dragonImage;
 
 	//＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊
 
@@ -711,12 +711,18 @@ VOID DrawPlayerStatus(VOID)
 //プレイ画面の描画
 VOID MY_PLAY_DRAW(VOID)
 {
-	//プレイ背景を描画（場所は選べる４タイプ！）
-	//草　原 ：playkusaImage
-	//ﾀﾞﾝｼﾞｮﾝ：playdanjonImage
-	//川　岸 ：playkawaImage
-	//ボス戦 ：playbossImage
-	DrawImage(playbossImage);
+
+	//＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊
+	
+//プレイ背景を描画（場所は選べる４タイプ！）
+//草　原 ：playkusaImage
+//ﾀﾞﾝｼﾞｮﾝ：playdanjonImage
+//川　岸 ：playkawaImage
+//ボス戦 ：playbossImage
+DrawImage(playkawaImage);
+
+	//＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊
+
 
 	//輝度を段々と変更する(黒→元の色へ)
 	SetDrawBright(encFeadPer, encFeadPer, encFeadPer);
