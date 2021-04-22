@@ -101,6 +101,7 @@ CHARACTOR_DATA playerData;
 
 //技テーブルデータ
 WAZA_RECORD wazaTable[WAZA_MAX];
+WAZA_RECORD TekiwazaTable[WAZA_MAX];
 
 //ステータスの表示系
 int statusHeight = 40;
@@ -136,6 +137,8 @@ int processCntMAX = GAME_FPS;
 int damageCnt = 0;
 int damageCntMAX = GAME_FPS * 1.5;
 BOOL damageProcFlg = FALSE;	//ダメージ処理を行ったか？
+
+BOOL IsPlayerTurn = FALSE;	//プレイヤーのターンか？
 
 //########## 関数のプロトタイプ宣言 ##########
 
@@ -204,6 +207,8 @@ VOID MY_TITLE_INIT(VOID)
 	playerData.MPMAX = 20;
 	playerData.MP = playerData.MPMAX;
 
+	//＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊
+
 	//敵のデータを固定
 	//スライム：slimeData
 	//ドラゴン：dragonData
@@ -214,13 +219,18 @@ VOID MY_TITLE_INIT(VOID)
 	//ドラゴン：dragonImage
 	tekiImage = dragonImage;
 
+	//＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊
+
+	//プレイヤーのターンか？
+	IsPlayerTurn = TRUE;
+
 	//ステータス系
 	TekiHpBar = GetRect(wakuImage.pos.x + 60, statusHeight + 60, wakuImage.pos.x + 60 + TekiHpBarMaxWidth, statusHeight + 60 + 60);
 	TekiHpBarWaku = TekiHpBar;
 
 	PlayerHpBar = GetRect(
 		messageImage.pos.x + messageImage.pos.width + 20,
-		600 ,
+		600,
 		messageImage.pos.x + messageImage.pos.width + 20 + PlayerHpBarMaxWidth,
 		600 + statusHeight);
 	PlayerHpBarWaku = PlayerHpBar;
@@ -255,6 +265,11 @@ VOID MY_TITLE_INIT(VOID)
 	wazaTable[9] = SetWazaRecord(9, "天使の輪", 0, 5, 0, 5, effectImage[9]);
 	wazaTable[10] = SetWazaRecord(10, "アースヒール", 0, 30, 30, 30, effectImage[10]);
 	wazaTable[11] = SetWazaRecord(11, "聖なる光", 0, 50, 100, 100, effectImage[11]);
+
+	//敵の技を設定
+	TekiwazaTable[0] = SetWazaRecord(0, "スプラッシュアタック", 2, 0, 0, 0, effectImage[12]);
+	TekiwazaTable[1] = SetWazaRecord(0, "マジカルビーム", 4, 0, 0, 0, effectImage[13]);
+	TekiwazaTable[2] = SetWazaRecord(0, "キュアー", 0, 7, 7, 0, effectImage[14]);
 
 	GameScene = GAME_SCENE_TITLE;	//ゲームシーンはタイトル画面から
 
@@ -343,192 +358,315 @@ VOID MY_PLAY_PROC(VOID)
 	//フェードインしながら再生
 	FadeInPlayAudio(&NowPlayBGM, 1000);
 
-	//コマンド系の処理
-	switch (NowCommand)
+	//プレイヤーのターンのとき
+	if (IsPlayerTurn == TRUE)
 	{
-	case encounter:
-
-		//敵が横に移動したら
-		if (encMoveFlg == TRUE)
+		//コマンド系の処理
+		switch (NowCommand)
 		{
+		case encounter:
+
+			//敵が横に移動したら
+			if (encMoveFlg == TRUE)
+			{
+				if (MY_KEY_CLICK(KEY_INPUT_RETURN) == TRUE)
+				{
+					PlayAudio(selectSE);
+					NowCommand = input;		//次のコマンドへ
+				}
+			}
+
+			break;
+		case input:
+			if (MY_KEY_CLICK(KEY_INPUT_UP) == TRUE)
+			{
+				PlayAudio(selectSE);
+				if (buttleCmd > attack) { buttleCmd--; }
+				else { buttleCmd = attack; }
+			}
+
+			if (MY_KEY_CLICK(KEY_INPUT_DOWN) == TRUE)
+			{
+				PlayAudio(selectSE);
+				if (buttleCmd < recovery) { buttleCmd++; }
+				else { buttleCmd = recovery; }
+			}
+
+			if (MY_KEY_CLICK(KEY_INPUT_LEFT) == TRUE)
+			{
+				PlayAudio(selectSE);
+				if (buttleCmd > attack) { buttleCmd--; }
+				else { buttleCmd = attack; }
+			}
+
+			if (MY_KEY_CLICK(KEY_INPUT_RIGHT) == TRUE)
+			{
+				PlayAudio(selectSE);
+				if (buttleCmd < recovery) { buttleCmd++; }
+				else { buttleCmd = recovery; }
+			}
+
 			if (MY_KEY_CLICK(KEY_INPUT_RETURN) == TRUE)
 			{
 				PlayAudio(selectSE);
-				NowCommand = input;		//次のコマンドへ
+				NowCommand = waza;	//次のコマンドへ
+				IsNotEnoughMP = FALSE;	//MPは足りる？
 			}
-		}
 
-		break;
-	case input:
-		if (MY_KEY_CLICK(KEY_INPUT_UP) == TRUE)
-		{
-			PlayAudio(selectSE);
-			if (buttleCmd > attack) { buttleCmd--; }
-			else { buttleCmd = attack; }
-		}
+			break;
 
-		if (MY_KEY_CLICK(KEY_INPUT_DOWN) == TRUE)
-		{
-			PlayAudio(selectSE);
-			if (buttleCmd < recovery) { buttleCmd++; }
-			else { buttleCmd = recovery; }
-		}
+		case waza:
 
-		if (MY_KEY_CLICK(KEY_INPUT_LEFT) == TRUE)
-		{
-			PlayAudio(selectSE);
-			if (buttleCmd > attack) { buttleCmd--; }
-			else { buttleCmd = attack; }
-		}
-
-		if (MY_KEY_CLICK(KEY_INPUT_RIGHT) == TRUE)
-		{
-			PlayAudio(selectSE);
-			if (buttleCmd < recovery) { buttleCmd++; }
-			else { buttleCmd = recovery; }
-		}
-
-		if (MY_KEY_CLICK(KEY_INPUT_RETURN) == TRUE)
-		{
-			PlayAudio(selectSE);
-			NowCommand = waza;	//次のコマンドへ
-			IsNotEnoughMP = FALSE;	//MPは足りる？
-		}
-
-		break;
-
-	case waza:
-
-		if (MY_KEY_CLICK(KEY_INPUT_BACK) == TRUE)
-		{
-			PlayAudio(selectSE);
-			NowCommand = input;	//前のコマンドへ
-		}
-
-		if (MY_KEY_CLICK(KEY_INPUT_UP) == TRUE)
-		{
-			PlayAudio(selectSE);
-			if (wazaSelectCmd >= wazaSelect2) { wazaSelectCmd -= 2; }
-		}
-
-		if (MY_KEY_CLICK(KEY_INPUT_DOWN) == TRUE)
-		{
-			PlayAudio(selectSE);
-			if (wazaSelectCmd <= wazaSelect1) { wazaSelectCmd += 2; }
-		}
-
-		if (MY_KEY_CLICK(KEY_INPUT_LEFT) == TRUE)
-		{
-			PlayAudio(selectSE);
-			if (wazaSelectCmd == wazaSelect1 || wazaSelectCmd == wazaSelect3) { wazaSelectCmd--; }
-		}
-
-		if (MY_KEY_CLICK(KEY_INPUT_RIGHT) == TRUE)
-		{
-			PlayAudio(selectSE);
-			if (wazaSelectCmd == wazaSelect0 || wazaSelectCmd == wazaSelect2) { wazaSelectCmd++; }
-		}
-
-		if (MY_KEY_CLICK(KEY_INPUT_RETURN) == TRUE)
-		{
-			wazaNo = (buttleCmd * WAZA_SELECT_MAX) + wazaSelectCmd;	//技Noを決定
-
-			if (playerData.MP < wazaTable[wazaNo].MP)
+			if (MY_KEY_CLICK(KEY_INPUT_BACK) == TRUE)
 			{
-				IsNotEnoughMP = TRUE;	//MPが足りない！
+				PlayAudio(selectSE);
+				NowCommand = input;	//前のコマンドへ
 			}
 
-			PlayAudio(selectSE);
+			if (MY_KEY_CLICK(KEY_INPUT_UP) == TRUE)
+			{
+				PlayAudio(selectSE);
+				if (wazaSelectCmd >= wazaSelect2) { wazaSelectCmd -= 2; }
+			}
+
+			if (MY_KEY_CLICK(KEY_INPUT_DOWN) == TRUE)
+			{
+				PlayAudio(selectSE);
+				if (wazaSelectCmd <= wazaSelect1) { wazaSelectCmd += 2; }
+			}
+
+			if (MY_KEY_CLICK(KEY_INPUT_LEFT) == TRUE)
+			{
+				PlayAudio(selectSE);
+				if (wazaSelectCmd == wazaSelect1 || wazaSelectCmd == wazaSelect3) { wazaSelectCmd--; }
+			}
+
+			if (MY_KEY_CLICK(KEY_INPUT_RIGHT) == TRUE)
+			{
+				PlayAudio(selectSE);
+				if (wazaSelectCmd == wazaSelect0 || wazaSelectCmd == wazaSelect2) { wazaSelectCmd++; }
+			}
+
+			if (MY_KEY_CLICK(KEY_INPUT_RETURN) == TRUE)
+			{
+				wazaNo = (buttleCmd * WAZA_SELECT_MAX) + wazaSelectCmd;	//技Noを決定
+
+				if (playerData.MP < wazaTable[wazaNo].MP)
+				{
+					IsNotEnoughMP = TRUE;	//MPが足りない！
+				}
+
+				PlayAudio(selectSE);
+				ProcCmdFlg = FALSE;		//技の説明をする
+				EffectEndFlg = FALSE;	//エフェクト描画未処理
+				NowCommand = process;	//次のコマンドへ
+				processCnt = 0;
+
+			}
+
+			break;
+
+		case process:
+
+			//MPが足りないときは選択し直す
+			if (IsNotEnoughMP == TRUE)
+			{
+				EffectEndFlg = FALSE;
+				if (MY_KEY_CLICK(KEY_INPUT_BACK) == TRUE)
+				{
+					PlayAudio(selectSE);
+					NowCommand = waza;		//前のコマンドへ
+					IsNotEnoughMP = FALSE;
+					break;
+				}
+			}
+
+			//MPが足りていれば
+			if (IsNotEnoughMP == FALSE)
+			{
+				//自動で次のコマンドへ
+				if (processCnt < processCntMAX) { processCnt++; }
+				else
+				{
+					ProcCmdFlg = TRUE;		//コマンド描画終了
+					wazaTable[wazaNo].effect.IsDraw = TRUE;	//エフェクト描画
+				}
+			}
+
+			//エフェクトがおわったら
+			if (EffectEndFlg == TRUE)
+			{
+				damageProcFlg = FALSE;	//ダメージ処理
+				damageCnt = 0;
+				NowCommand = damage;	//次のコマンドへ
+			}
+
+			break;
+		case damage:
+
+			if (damageProcFlg == FALSE)
+			{
+				if (buttleCmd == attack || buttleCmd == magic)
+				{
+					tekiData.HP -= (int)ceil(playerData.ATK * wazaTable[wazaNo].ATK);	//HPを減らす
+					if (tekiData.HP < 0) { tekiData.HP = 0; }
+					playerData.MP -= wazaTable[wazaNo].MP;	//MPを減らす
+					if (playerData.MP < 0) { playerData.MP = 0; }
+				}
+				else if (buttleCmd == recovery)
+				{
+					playerData.HP += wazaTable[wazaNo].HealHP;	//HPを増やす
+					if (playerData.HP > playerData.HPMAX) { playerData.HP = playerData.HPMAX; }
+					playerData.MP += wazaTable[wazaNo].HealMP;	//MPを増やす
+					if (playerData.MP > playerData.MPMAX) { playerData.MP = playerData.MPMAX; }
+				}
+				damageProcFlg = TRUE;
+			}
+
+			//自動で次のコマンドへ
+			if (damageCnt < damageCntMAX) { damageCnt++; }
+			else
+			{
+				//敵のHPが0以下になったとき
+				if (tekiData.HP <= 0)
+				{
+					GameScene = GAME_SCENE_END;		//エンド画面へ
+					IsSlimeWin = TRUE;				//敵に勝った！
+					IsFadeIn = FALSE;				//フェードインはしない！
+					IsFadeOut = TRUE;				//フェードアウト開始！
+				}
+
+				//自分のHPは0以下になったとき
+				if (playerData.HP <= 0)
+				{
+					GameScene = GAME_SCENE_END;		//エンド画面へ
+					IsSlimeWin = FALSE;				//敵に負けた
+					IsFadeIn = FALSE;				//フェードインはしない！
+					IsFadeOut = TRUE;				//フェードアウト開始！
+				}
+
+				//コマンドを入力に戻す
+				NowCommand = input;
+
+				//プレイヤーのターンエンド！
+				IsPlayerTurn = FALSE;
+			}
+			break;
+		}
+	}
+
+	//敵のターンのとき
+	if (IsPlayerTurn == FALSE)
+	{
+		//コマンド系の処理
+		switch (NowCommand)
+		{
+
+		case input:
+
+			//敵の体力が半分以下ならば
+			if (tekiData.HP < tekiData.HPMAX / 2)
+			{
+				buttleCmd = recovery;	//回復
+			}
+			else
+			{
+				buttleCmd = GetRand(1);	//0か1をランダムで選ぶ
+				//0ならattack
+				//1ならmagic
+			}
+
+			NowCommand = waza;
+
+			break;
+
+		case waza:
+
+			//敵の技Noを覚えておく
+			wazaNo = buttleCmd;
+
 			ProcCmdFlg = FALSE;		//技の説明をする
 			EffectEndFlg = FALSE;	//エフェクト描画未処理
 			NowCommand = process;	//次のコマンドへ
 			processCnt = 0;
 
-		}
+			break;
 
-		break;
+		case process:
 
-	case process:
-
-		//MPが足りないときは選択し直す
-		if (IsNotEnoughMP == TRUE)
-		{
-			EffectEndFlg = FALSE;
-			if (MY_KEY_CLICK(KEY_INPUT_BACK) == TRUE)
-			{
-				PlayAudio(selectSE);
-				NowCommand = waza;		//前のコマンドへ
-				IsNotEnoughMP = FALSE;
-				break;
-			}
-		}
-
-		//MPが足りていれば
-		if (IsNotEnoughMP == FALSE)
-		{
 			//自動で次のコマンドへ
 			if (processCnt < processCntMAX) { processCnt++; }
 			else
 			{
 				ProcCmdFlg = TRUE;		//コマンド描画終了
-				wazaTable[wazaNo].effect.IsDraw = TRUE;	//エフェクト描画
+				TekiwazaTable[wazaNo].effect.IsDraw = TRUE;	//エフェクト描画
 			}
-		}
 
-		//エフェクトがおわったら
-		if (EffectEndFlg == TRUE)
-		{
-			damageProcFlg = FALSE;	//ダメージ処理
-			damageCnt = 0;
-			NowCommand = damage;	//次のコマンドへ
-		}
-
-		break;
-	case damage:
-
-		if (damageProcFlg == FALSE)
-		{
-			if (buttleCmd == attack || buttleCmd == magic)
+			//エフェクトがおわったら
+			if (EffectEndFlg == TRUE)
 			{
-				tekiData.HP -= (int)ceil(playerData.ATK * wazaTable[wazaNo].ATK);	//HPを減らす
-				if (tekiData.HP < 0) { tekiData.HP = 0; }
-				playerData.MP -= wazaTable[wazaNo].MP;	//MPを減らす
-				if (tekiData.MP < 0) { tekiData.MP = 0; }
+				damageProcFlg = FALSE;	//ダメージ処理
+				damageCnt = 0;
+				NowCommand = damage;	//次のコマンドへ
 			}
-			else if (buttleCmd == recovery)
+
+			break;
+		case damage:
+
+			if (damageProcFlg == FALSE)
 			{
-				playerData.HP += wazaTable[wazaNo].HealHP;	//HPを増やす
-				playerData.MP += wazaTable[wazaNo].HealMP;	//MPを増やす
+				if (buttleCmd == attack || buttleCmd == magic)
+				{
+					playerData.HP -= (int)ceil(tekiData.ATK * TekiwazaTable[wazaNo].ATK);	//HPを減らす
+					if (playerData.HP < 0) { playerData.HP = 0; }
+
+					//敵のMPは減らさない、にしておく
+					//tekiData.MP -= TekiwazaTable[wazaNo].MP;	//MPを減らす
+					//if (tekiData.MP < 0) { tekiData.MP = 0; }
+				}
+				else if (buttleCmd == recovery)
+				{
+					tekiData.HP += TekiwazaTable[wazaNo].HealHP;	//HPを増やす
+					if (tekiData.HP > tekiData.HPMAX) { tekiData.HP = tekiData.HPMAX; }
+					tekiData.MP += TekiwazaTable[wazaNo].HealMP;	//MPを増やす
+					if (tekiData.MP> tekiData.MPMAX) { tekiData.MP = tekiData.MPMAX; }
+				}
+				damageProcFlg = TRUE;
 			}
-			damageProcFlg = TRUE;
+
+			//自動で次のコマンドへ
+			if (damageCnt < damageCntMAX) { damageCnt++; }
+			else
+			{
+				//敵のHPが0以下になったとき
+				if (tekiData.HP <= 0)
+				{
+					GameScene = GAME_SCENE_END;		//エンド画面へ
+					IsSlimeWin = TRUE;				//敵に勝った！
+					IsFadeIn = FALSE;				//フェードインはしない！
+					IsFadeOut = TRUE;				//フェードアウト開始！
+				}
+
+				//自分のHPは0以下になったとき
+				if (playerData.HP <= 0)
+				{
+					GameScene = GAME_SCENE_END;		//エンド画面へ
+					IsSlimeWin = FALSE;				//敵に負けた
+					IsFadeIn = FALSE;				//フェードインはしない！
+					IsFadeOut = TRUE;				//フェードアウト開始！
+				}
+
+				//コマンドを入力に戻す
+				NowCommand = input;
+
+				//プレイヤーのターンエンド！
+				IsPlayerTurn = FALSE;
+
+				//プレイヤーのターンにする
+				IsPlayerTurn = TRUE;
+			}
+			break;
 		}
-
-		//自動で次のコマンドへ
-		if (damageCnt < damageCntMAX) { damageCnt++; }
-		else
-		{
-			//敵のHPが0以下になったとき
-			if (tekiData.HP <= 0)
-			{
-				GameScene = GAME_SCENE_END;		//エンド画面へ
-				IsSlimeWin = TRUE;				//敵に勝った！
-				IsFadeIn = FALSE;				//フェードインはしない！
-				IsFadeOut = TRUE;				//フェードアウト開始！
-			}
-
-			//自分のHPは0以下になったとき
-			if (playerData.HP <= 0)
-			{
-				GameScene = GAME_SCENE_END;		//エンド画面へ
-				IsSlimeWin = FALSE;				//敵に負けた
-				IsFadeIn = FALSE;				//フェードインはしない！
-				IsFadeOut = TRUE;				//フェードアウト開始！
-			}
-
-			NowCommand = input;
-		}
-
-		break;
 	}
 
 	return;
@@ -601,137 +739,216 @@ VOID MY_PLAY_DRAW(VOID)
 
 	char ProcText[STR_MAX];
 
-	//コマンド系の処理
-	switch (NowCommand)
+	//プレイヤーのターンのとき
+	if (IsPlayerTurn == TRUE)
 	{
-	case encounter:
-
-		//敵を移動させる処理
-		if (encMoveFlg == FALSE)
+		//コマンド系の処理
+		switch (NowCommand)
 		{
-			encFeadPer += 5;
-			if (tekiImage.pos.x < GAME_WIDTH / 2 - tekiImage.pos.width / 2) { tekiImage.pos.x += 10; }
-			else { encMoveFlg = TRUE; }
-		}
+		case encounter:
 
-		//敵が現れてから・・・
-		if (encMoveFlg == TRUE)
-		{
+			//敵を移動させる処理
+			if (encMoveFlg == FALSE)
+			{
+				encFeadPer += 5;
+				if (tekiImage.pos.x < GAME_WIDTH / 2 - tekiImage.pos.width / 2) { tekiImage.pos.x += 10; }
+				else { encMoveFlg = TRUE; }
+			}
+
+			//敵が現れてから・・・
+			if (encMoveFlg == TRUE)
+			{
+				DrawPlayerStatus();	//プレイヤーのステータス描画
+				DrawStringToHandle(messageImage.pos.x + 10, messageImage.pos.y + 50, "なんと！モンスターに遭遇してしまった！！", GetColor(255, 255, 255), fontCommand.handle);
+				DrawStringToHandle(messageImage.pos.x + 10, messageImage.pos.y + 90, "どうやら戦うしかないようだ・・・！▼", GetColor(255, 255, 255), fontCommand.handle);
+			}
+
+			break;
+		case input:
+
 			DrawPlayerStatus();	//プレイヤーのステータス描画
-			DrawStringToHandle(messageImage.pos.x + 10, messageImage.pos.y + 50, "なんと！モンスターに遭遇してしまった！！", GetColor(255, 255, 255), fontCommand.handle);
-			DrawStringToHandle(messageImage.pos.x + 10, messageImage.pos.y + 90, "どうやら戦うしかないようだ・・・！▼", GetColor(255, 255, 255), fontCommand.handle);
-		}
+			if (buttleCmd == attack) { kougekiColor = selectColor; }
+			else if (buttleCmd == magic) { mahouColor = selectColor; }
+			else if (buttleCmd == recovery) { kaihukuColor = selectColor; }
+			DrawStringToHandle(messageImage.pos.x + 10, messageImage.pos.y + 50, "コウゲキ", kougekiColor, fontCommand.handle);
+			DrawStringToHandle(messageImage.pos.x + 10, messageImage.pos.y + 50 + 40, "マホウ", mahouColor, fontCommand.handle);
+			DrawStringToHandle(messageImage.pos.x + 10, messageImage.pos.y + 50 + 80, "カイフク", kaihukuColor, fontCommand.handle);
 
-		break;
-	case input:
+			break;
 
-		DrawPlayerStatus();	//プレイヤーのステータス描画
-		if (buttleCmd == attack) { kougekiColor = selectColor; }
-		else if (buttleCmd == magic) { mahouColor = selectColor; }
-		else if (buttleCmd == recovery) { kaihukuColor = selectColor; }
-		DrawStringToHandle(messageImage.pos.x + 10, messageImage.pos.y + 50, "コウゲキ", kougekiColor, fontCommand.handle);
-		DrawStringToHandle(messageImage.pos.x + 10, messageImage.pos.y + 50 + 40, "マホウ", mahouColor, fontCommand.handle);
-		DrawStringToHandle(messageImage.pos.x + 10, messageImage.pos.y + 50 + 80, "カイフク", kaihukuColor, fontCommand.handle);
+		case waza:
 
-		break;
-
-	case waza:
-
-		DrawPlayerStatus();	//プレイヤーのステータス描画
-
-		//入力のコマンドはそのまま描画中
-		if (buttleCmd == attack) { kougekiColor = selectColor; }
-		else if (buttleCmd == magic) { mahouColor = selectColor; }
-		else if (buttleCmd == recovery) { kaihukuColor = selectColor; }
-		DrawStringToHandle(messageImage.pos.x + 10, messageImage.pos.y + 50, "コウゲキ", kougekiColor, fontCommand.handle);
-		DrawStringToHandle(messageImage.pos.x + 10, messageImage.pos.y + 50 + 40, "マホウ", mahouColor, fontCommand.handle);
-		DrawStringToHandle(messageImage.pos.x + 10, messageImage.pos.y + 50 + 80, "カイフク", kaihukuColor, fontCommand.handle);
-
-		if (wazaSelectCmd == 0) { waza1Color = selectColor; }
-		else if (wazaSelectCmd == 1) { waza2Color = selectColor; }
-		else if (wazaSelectCmd == 2) { waza3Color = selectColor; }
-		else if (wazaSelectCmd == 3) { waza4Color = selectColor; }
-
-		//技を描画
-		if (buttleCmd == attack)
-		{
-			DrawStringToHandle(messageImage.pos.x + 10 + 200, messageImage.pos.y + 50, wazaTable[0].Name, waza1Color, fontCommand.handle);
-			DrawStringToHandle(messageImage.pos.x + 10 + 500, messageImage.pos.y + 50, wazaTable[1].Name, waza2Color, fontCommand.handle);
-			DrawStringToHandle(messageImage.pos.x + 10 + 200, messageImage.pos.y + 50 + 50, wazaTable[2].Name, waza3Color, fontCommand.handle);
-			DrawStringToHandle(messageImage.pos.x + 10 + 500, messageImage.pos.y + 50 + 50, wazaTable[3].Name, waza4Color, fontCommand.handle);
-		}
-		else if (buttleCmd == magic)
-		{
-			DrawStringToHandle(messageImage.pos.x + 10 + 200, messageImage.pos.y + 50, wazaTable[4].Name, waza1Color, fontCommand.handle);
-			DrawStringToHandle(messageImage.pos.x + 10 + 500, messageImage.pos.y + 50, wazaTable[5].Name, waza2Color, fontCommand.handle);
-			DrawStringToHandle(messageImage.pos.x + 10 + 200, messageImage.pos.y + 50 + 50, wazaTable[6].Name, waza3Color, fontCommand.handle);
-			DrawStringToHandle(messageImage.pos.x + 10 + 500, messageImage.pos.y + 50 + 50, wazaTable[7].Name, waza4Color, fontCommand.handle);
-		}
-		else if (buttleCmd == recovery)
-		{
-			DrawStringToHandle(messageImage.pos.x + 10 + 200, messageImage.pos.y + 50, wazaTable[8].Name, waza1Color, fontCommand.handle);
-			DrawStringToHandle(messageImage.pos.x + 10 + 500, messageImage.pos.y + 50, wazaTable[9].Name, waza2Color, fontCommand.handle);
-			DrawStringToHandle(messageImage.pos.x + 10 + 200, messageImage.pos.y + 50 + 50, wazaTable[10].Name, waza3Color, fontCommand.handle);
-			DrawStringToHandle(messageImage.pos.x + 10 + 500, messageImage.pos.y + 50 + 50, wazaTable[11].Name, waza4Color, fontCommand.handle);
-		}
-
-
-		break;
-
-	case process:
-
-		if (IsNotEnoughMP == FALSE)
-		{
 			DrawPlayerStatus();	//プレイヤーのステータス描画
 
+			//入力のコマンドはそのまま描画中
+			if (buttleCmd == attack) { kougekiColor = selectColor; }
+			else if (buttleCmd == magic) { mahouColor = selectColor; }
+			else if (buttleCmd == recovery) { kaihukuColor = selectColor; }
+			DrawStringToHandle(messageImage.pos.x + 10, messageImage.pos.y + 50, "コウゲキ", kougekiColor, fontCommand.handle);
+			DrawStringToHandle(messageImage.pos.x + 10, messageImage.pos.y + 50 + 40, "マホウ", mahouColor, fontCommand.handle);
+			DrawStringToHandle(messageImage.pos.x + 10, messageImage.pos.y + 50 + 80, "カイフク", kaihukuColor, fontCommand.handle);
+
+			if (wazaSelectCmd == 0) { waza1Color = selectColor; }
+			else if (wazaSelectCmd == 1) { waza2Color = selectColor; }
+			else if (wazaSelectCmd == 2) { waza3Color = selectColor; }
+			else if (wazaSelectCmd == 3) { waza4Color = selectColor; }
+
+			//技を描画
 			if (buttleCmd == attack)
 			{
-				sprintfDx(ProcText, "%sは%s攻撃した！", playerData.Name, wazaTable[wazaNo].Name);
+				DrawStringToHandle(messageImage.pos.x + 10 + 200, messageImage.pos.y + 50, wazaTable[0].Name, waza1Color, fontCommand.handle);
+				DrawStringToHandle(messageImage.pos.x + 10 + 500, messageImage.pos.y + 50, wazaTable[1].Name, waza2Color, fontCommand.handle);
+				DrawStringToHandle(messageImage.pos.x + 10 + 200, messageImage.pos.y + 50 + 50, wazaTable[2].Name, waza3Color, fontCommand.handle);
+				DrawStringToHandle(messageImage.pos.x + 10 + 500, messageImage.pos.y + 50 + 50, wazaTable[3].Name, waza4Color, fontCommand.handle);
 			}
 			else if (buttleCmd == magic)
 			{
-				sprintfDx(ProcText, "%sは%sを唱えた！", playerData.Name, wazaTable[wazaNo].Name);
+				DrawStringToHandle(messageImage.pos.x + 10 + 200, messageImage.pos.y + 50, wazaTable[4].Name, waza1Color, fontCommand.handle);
+				DrawStringToHandle(messageImage.pos.x + 10 + 500, messageImage.pos.y + 50, wazaTable[5].Name, waza2Color, fontCommand.handle);
+				DrawStringToHandle(messageImage.pos.x + 10 + 200, messageImage.pos.y + 50 + 50, wazaTable[6].Name, waza3Color, fontCommand.handle);
+				DrawStringToHandle(messageImage.pos.x + 10 + 500, messageImage.pos.y + 50 + 50, wazaTable[7].Name, waza4Color, fontCommand.handle);
 			}
 			else if (buttleCmd == recovery)
 			{
-				sprintfDx(ProcText, "%sは%sを祈った！", playerData.Name, wazaTable[wazaNo].Name);
+				DrawStringToHandle(messageImage.pos.x + 10 + 200, messageImage.pos.y + 50, wazaTable[8].Name, waza1Color, fontCommand.handle);
+				DrawStringToHandle(messageImage.pos.x + 10 + 500, messageImage.pos.y + 50, wazaTable[9].Name, waza2Color, fontCommand.handle);
+				DrawStringToHandle(messageImage.pos.x + 10 + 200, messageImage.pos.y + 50 + 50, wazaTable[10].Name, waza3Color, fontCommand.handle);
+				DrawStringToHandle(messageImage.pos.x + 10 + 500, messageImage.pos.y + 50 + 50, wazaTable[11].Name, waza4Color, fontCommand.handle);
 			}
 
-			//エフェクトを描画しても良いとき
-			if (ProcCmdFlg == TRUE)
+			break;
+
+		case process:
+
+			if (IsNotEnoughMP == FALSE)
 			{
-				DrawDivImage(&wazaTable[wazaNo].effect);
-				if (wazaTable[wazaNo].effect.IsDraw == FALSE)
-				{
-					EffectEndFlg = TRUE;	//エフェクト描画終了
-				}
 				DrawPlayerStatus();	//プレイヤーのステータス描画
+
+				if (buttleCmd == attack)
+				{
+					sprintfDx(ProcText, "%sは%s攻撃した！", playerData.Name, wazaTable[wazaNo].Name);
+				}
+				else if (buttleCmd == magic)
+				{
+					sprintfDx(ProcText, "%sは%sを唱えた！", playerData.Name, wazaTable[wazaNo].Name);
+				}
+				else if (buttleCmd == recovery)
+				{
+					sprintfDx(ProcText, "%sは%sを祈った！", playerData.Name, wazaTable[wazaNo].Name);
+				}
+
+				//エフェクトを描画しても良いとき
+				if (ProcCmdFlg == TRUE)
+				{
+					DrawDivImage(&wazaTable[wazaNo].effect);
+					if (wazaTable[wazaNo].effect.IsDraw == FALSE)
+					{
+						EffectEndFlg = TRUE;	//エフェクト描画終了
+					}
+					DrawPlayerStatus();	//プレイヤーのステータス描画
+				}
 			}
-		}
-		else
-		{
+			else
+			{
+				DrawPlayerStatus();	//プレイヤーのステータス描画
+				sprintfDx(ProcText, "MPが足りない...技を選び直さねば...");
+			}
+			DrawFormatStringToHandle(messageImage.pos.x + 10, messageImage.pos.y + 50, GetColor(255, 255, 255), fontCommand.handle, ProcText);
+
+			break;
+		case damage:
+
 			DrawPlayerStatus();	//プレイヤーのステータス描画
-			sprintfDx(ProcText, "MPが足りない...技を選び直さねば...");
+
+			if (buttleCmd == attack || buttleCmd == magic)
+			{
+				sprintfDx(ProcText, "%sに%3dのアタック！！", tekiData.Name, (int)ceil(playerData.ATK * wazaTable[wazaNo].ATK));
+			}
+			else if (buttleCmd == recovery)
+			{
+				sprintfDx(ProcText, "%sは HP%3d / MP%3d 回復した", playerData.Name, wazaTable[wazaNo].HealHP, wazaTable[wazaNo].HealMP);
+			}
+			DrawFormatStringToHandle(messageImage.pos.x + 10, messageImage.pos.y + 50, GetColor(255, 255, 255), fontCommand.handle, ProcText);
+
+			break;
 		}
-		DrawFormatStringToHandle(messageImage.pos.x + 10, messageImage.pos.y + 50, GetColor(255, 255, 255), fontCommand.handle, ProcText);
-
-		break;
-	case damage:
-
-		DrawPlayerStatus();	//プレイヤーのステータス描画
-
-		if (buttleCmd == attack || buttleCmd == magic)
-		{
-			sprintfDx(ProcText, "%sに%3dのアタック！！", tekiData.Name, (int)ceil(playerData.ATK * wazaTable[wazaNo].ATK));
-		}
-		else if (buttleCmd == recovery)
-		{
-			sprintfDx(ProcText, "%sは HP%3d / MP%3d 回復した", playerData.Name, wazaTable[wazaNo].HealHP, wazaTable[wazaNo].HealMP);
-		}
-		DrawFormatStringToHandle(messageImage.pos.x + 10, messageImage.pos.y + 50, GetColor(255, 255, 255), fontCommand.handle, ProcText);
-
-		break;
 	}
+
+	//敵のターンのとき
+	if (IsPlayerTurn == FALSE)
+	{
+		//コマンド系の処理
+		switch (NowCommand)
+		{
+
+		case input:
+
+			DrawPlayerStatus();	//プレイヤーのステータス描画
+
+			break;
+
+		case waza:
+
+			DrawPlayerStatus();	//プレイヤーのステータス描画
+
+			break;
+
+		case process:
+
+			if (IsNotEnoughMP == FALSE)
+			{
+				DrawPlayerStatus();	//プレイヤーのステータス描画
+
+				if (buttleCmd == attack)
+				{
+					sprintfDx(ProcText, "%sの%s！", tekiData.Name, TekiwazaTable[wazaNo].Name);
+				}
+				else if (buttleCmd == magic)
+				{
+					sprintfDx(ProcText, "%sの%s！", tekiData.Name, TekiwazaTable[wazaNo].Name);
+				}
+				else if (buttleCmd == recovery)
+				{
+					sprintfDx(ProcText, "%sの%s", tekiData.Name, TekiwazaTable[wazaNo].Name);
+				}
+
+				//エフェクトを描画しても良いとき
+				if (ProcCmdFlg == TRUE)
+				{
+					DrawDivImage(&TekiwazaTable[wazaNo].effect);
+					if (TekiwazaTable[wazaNo].effect.IsDraw == FALSE)
+					{
+						EffectEndFlg = TRUE;	//エフェクト描画終了
+					}
+					DrawPlayerStatus();	//プレイヤーのステータス描画
+				}
+			}
+			else
+			{
+				DrawPlayerStatus();	//プレイヤーのステータス描画
+				sprintfDx(ProcText, "MPが足りない...技を選び直さねば...");
+			}
+			DrawFormatStringToHandle(messageImage.pos.x + 10, messageImage.pos.y + 50, GetColor(255, 255, 255), fontCommand.handle, ProcText);
+
+			break;
+		case damage:
+
+			DrawPlayerStatus();	//プレイヤーのステータス描画
+
+			if (buttleCmd == attack || buttleCmd == magic)
+			{
+				sprintfDx(ProcText, "%sに%3dのアタック！！", playerData.Name, (int)ceil(tekiData.ATK * TekiwazaTable[wazaNo].ATK));
+			}
+			else if (buttleCmd == recovery)
+			{
+				sprintfDx(ProcText, "%sは HP%3d / MP%3d 回復した", tekiData.Name, TekiwazaTable[wazaNo].HealHP, TekiwazaTable[wazaNo].HealMP);
+			}
+			DrawFormatStringToHandle(messageImage.pos.x + 10, messageImage.pos.y + 50, GetColor(255, 255, 255), fontCommand.handle, ProcText);
+
+			break;
+		}
+	}
+
 
 	//モンスターのステータス
 	DrawImage(wakuImage);

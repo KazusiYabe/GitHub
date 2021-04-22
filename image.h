@@ -49,7 +49,7 @@
 
 #define IMAGE_DIV_MAX				256			//ÉnÉìÉhÉãÇÃç≈ëÂêî(îCà”)
 
-#define EFFECT_MAX	12
+#define EFFECT_MAX	15
 
 #define IMAGE_WAZA0_DIV_PATH		TEXT(".\\IMAGE\\EFFECT\\hikkaku.png")	
 #define IMAGE_WAZA1_DIV_PATH		TEXT(".\\IMAGE\\EFFECT\\slash.png")
@@ -65,6 +65,9 @@
 #define IMAGE_WAZA9_DIV_PATH		TEXT(".\\IMAGE\\EFFECT\\pipo-btleffect044.png")	
 #define IMAGE_WAZA10_DIV_PATH		TEXT(".\\IMAGE\\EFFECT\\pipo-btleffect045.png")
 #define IMAGE_WAZA11_DIV_PATH		TEXT(".\\IMAGE\\EFFECT\\kaihuku.png")	
+#define IMAGE_WAZA12_DIV_PATH		TEXT(".\\IMAGE\\EFFECT\\pipo-btleffect144.png")	
+#define IMAGE_WAZA13_DIV_PATH		TEXT(".\\IMAGE\\EFFECT\\pipo-btleffect141.png")	
+#define IMAGE_WAZA14_DIV_PATH		TEXT(".\\IMAGE\\EFFECT\\pipo-btleffect166_960.png")	
 
 //########## ç\ë¢ëÃ ##########
 

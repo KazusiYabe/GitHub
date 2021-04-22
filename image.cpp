@@ -175,6 +175,30 @@ BOOL MY_IMAGE_LOAD(VOID)
 		return FALSE;
 	}
 
+	//エフェクト画像の読み込み
+	if (MY_IMAGE_LOAD_DIV_FILE(
+		&effectImage[12], IMAGE_WAZA12_DIV_PATH,
+		1, 15, (640 / 1), (7200 / 15),	//画像によって数値を変更すること
+		GAME_WIDTH / 2, GAME_HEIGHT / 2, TRUE, GetRect(0, 0, 0, 0)) == FALSE) {
+		return FALSE;
+	}
+
+	//エフェクト画像の読み込み
+	if (MY_IMAGE_LOAD_DIV_FILE(
+		&effectImage[13], IMAGE_WAZA13_DIV_PATH,
+		3, 10, (1920 / 3), (4800 / 10),	//画像によって数値を変更すること
+		GAME_WIDTH / 2, GAME_HEIGHT / 2, TRUE, GetRect(0, 0, 0, 0)) == FALSE) {
+		return FALSE;
+	}
+
+	//エフェクト画像の読み込み
+	if (MY_IMAGE_LOAD_DIV_FILE(
+		&effectImage[14], IMAGE_WAZA14_DIV_PATH,
+		5, 4, (4800 / 5), (2880 / 4),	//画像によって数値を変更すること
+		GAME_WIDTH / 2, GAME_HEIGHT / 2, TRUE, GetRect(0, 0, 0, 0)) == FALSE) {
+		return FALSE;
+	}
+
 	//他の画像もココで読み込むこと
 
 	return TRUE;
