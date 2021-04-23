@@ -94,6 +94,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		//FPSの更新処理
 		MY_FPS_UPDATE();
 
+		//ESCキーで強制終了
+		if (MY_KEY_CLICK(KEY_INPUT_ESCAPE) == TRUE) { break; }
+
 		//以前のシーンを取得
 		if (GameScene != GAME_SCENE_CHANGE)	//シーン切り替え以外なら
 		{

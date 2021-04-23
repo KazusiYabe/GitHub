@@ -23,6 +23,12 @@ AUDIO sampleSE;			//サンプルSE
 AUDIO selectSE;			//選択SE
 AUDIO selectEnterSE;	//選択SE
 
+AUDIO wazaSE[WAZA_EFFECT_MAX];	//技のエフェクトのSE
+
+AUDIO dragonSE;	//ドラゴンの鳴き声
+AUDIO slimeSE;	//スライムの鳴き声
+AUDIO playerSE;	//プレイヤの鳴き声
+
 //########## 関数 ##########
 
 /// <summary>
@@ -33,7 +39,7 @@ BOOL MY_AUDIO_LOAD(VOID)
 {
 	//BGMの読み込み
 	if (MY_AUDIO_LOAD_FILE(&TitleBGM, BGM_TITLE_PATH, 50, DX_PLAYTYPE_LOOP) == FALSE) { return FALSE; }
-	if (MY_AUDIO_LOAD_FILE(&PlayBGM, BGM_PLAY_PATH, 30, DX_PLAYTYPE_LOOP) == FALSE) { return FALSE; }
+	if (MY_AUDIO_LOAD_FILE(&PlayBGM, BGM_PLAY_PATH, 25, DX_PLAYTYPE_LOOP) == FALSE) { return FALSE; }
 	if (MY_AUDIO_LOAD_FILE(&EndClearBGM, BGM_END_CLEAR_PATH, 50, DX_PLAYTYPE_LOOP) == FALSE) { return FALSE; }
 	if (MY_AUDIO_LOAD_FILE(&EndOverBGM, BGM_END_OVER_PATH, 50, DX_PLAYTYPE_LOOP) == FALSE) { return FALSE; }
 
@@ -43,7 +49,26 @@ BOOL MY_AUDIO_LOAD(VOID)
 	if (MY_AUDIO_LOAD_FILE(&selectEnterSE, SE_SELECT_ENTER_PATH, 100, DX_PLAYTYPE_BACK) == FALSE) { return FALSE; }
 
 	//他の音楽もココで読み込むこと
+	if (MY_AUDIO_LOAD_FILE(&wazaSE[0], SE_WAZA0_PATH, 100, DX_PLAYTYPE_BACK) == FALSE) { return FALSE; }
+	if (MY_AUDIO_LOAD_FILE(&wazaSE[1], SE_WAZA1_PATH, 100, DX_PLAYTYPE_BACK) == FALSE) { return FALSE; }
+	if (MY_AUDIO_LOAD_FILE(&wazaSE[2], SE_WAZA2_PATH, 100, DX_PLAYTYPE_BACK) == FALSE) { return FALSE; }
+	if (MY_AUDIO_LOAD_FILE(&wazaSE[3], SE_WAZA3_PATH, 100, DX_PLAYTYPE_BACK) == FALSE) { return FALSE; }
+	if (MY_AUDIO_LOAD_FILE(&wazaSE[4], SE_WAZA4_PATH, 100, DX_PLAYTYPE_BACK) == FALSE) { return FALSE; }
+	if (MY_AUDIO_LOAD_FILE(&wazaSE[5], SE_WAZA5_PATH, 100, DX_PLAYTYPE_BACK) == FALSE) { return FALSE; }
+	if (MY_AUDIO_LOAD_FILE(&wazaSE[6], SE_WAZA6_PATH, 100, DX_PLAYTYPE_BACK) == FALSE) { return FALSE; }
+	if (MY_AUDIO_LOAD_FILE(&wazaSE[7], SE_WAZA7_PATH, 100, DX_PLAYTYPE_BACK) == FALSE) { return FALSE; }
+	if (MY_AUDIO_LOAD_FILE(&wazaSE[8], SE_WAZA8_PATH, 100, DX_PLAYTYPE_BACK) == FALSE) { return FALSE; }
+	if (MY_AUDIO_LOAD_FILE(&wazaSE[9], SE_WAZA9_PATH, 100, DX_PLAYTYPE_BACK) == FALSE) { return FALSE; }
+	if (MY_AUDIO_LOAD_FILE(&wazaSE[10], SE_WAZA10_PATH, 100, DX_PLAYTYPE_BACK) == FALSE) { return FALSE; }
+	if (MY_AUDIO_LOAD_FILE(&wazaSE[11], SE_WAZA11_PATH, 100, DX_PLAYTYPE_BACK) == FALSE) { return FALSE; }
+	if (MY_AUDIO_LOAD_FILE(&wazaSE[12], SE_WAZA12_PATH, 100, DX_PLAYTYPE_BACK) == FALSE) { return FALSE; }
+	if (MY_AUDIO_LOAD_FILE(&wazaSE[13], SE_WAZA13_PATH, 100, DX_PLAYTYPE_BACK) == FALSE) { return FALSE; }
+	if (MY_AUDIO_LOAD_FILE(&wazaSE[14], SE_WAZA14_PATH, 100, DX_PLAYTYPE_BACK) == FALSE) { return FALSE; }
 
+	if (MY_AUDIO_LOAD_FILE(&dragonSE, SE_DRAGON_PATH, 100, DX_PLAYTYPE_BACK) == FALSE) { return FALSE; }
+	if (MY_AUDIO_LOAD_FILE(&slimeSE, SE_SLIME_PATH, 100, DX_PLAYTYPE_BACK) == FALSE) { return FALSE; }
+	if (MY_AUDIO_LOAD_FILE(&playerSE, SE_PLAYER_PATH, 100, DX_PLAYTYPE_BACK) == FALSE) { return FALSE; }
+	
 	return TRUE;
 }
 
@@ -63,7 +88,15 @@ VOID MY_AUDIO_DELETE(VOID)
 	DeleteSoundMem(selectSE.handle);
 	DeleteSoundMem(selectEnterSE.handle);
 
-	//他の画像もココで削除すること
+	DeleteSoundMem(dragonSE.handle);
+	DeleteSoundMem(slimeSE.handle);
+	DeleteSoundMem(playerSE.handle);
+
+	//他の音楽もココで削除すること
+	for (int cnt = 0; cnt < WAZA_EFFECT_MAX; cnt++)
+	{
+		DeleteSoundMem(wazaSE[cnt].handle);
+	}
 
 	return;
 }
@@ -88,7 +121,7 @@ BOOL MY_AUDIO_LOAD_FILE(AUDIO* audio, const char* path, int volume, int playType
 	}
 
 	//音量を設定
-	SetVolumeAudio(audio, volume);
+	SetVolumeAudio(audio, GetVolume(volume));
 
 	//再生形式を設定
 	audio->playType = playType;

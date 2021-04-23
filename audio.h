@@ -30,9 +30,29 @@
 #define BGM_END_CLEAR_PATH	TEXT(".\\AUDIO\\BGM\\秋晴れの空.ogg")	
 #define BGM_END_OVER_PATH	TEXT(".\\AUDIO\\BGM\\end.ogg")
 
-#define SE_SAMPLE_PATH		TEXT(".\\AUDIO\\SE\\coin.ogg")		
+#define SE_SAMPLE_PATH			TEXT(".\\AUDIO\\SE\\coin.ogg")		
 #define SE_SELECT_PATH			TEXT(".\\AUDIO\\SE\\battle_select.mp3")		
-#define SE_SELECT_ENTER_PATH	TEXT(".\\AUDIO\\SE\\battle_select_enter.mp3")		
+#define SE_SELECT_ENTER_PATH	TEXT(".\\AUDIO\\SE\\battle_select_enter.mp3")
+
+#define SE_WAZA0_PATH	TEXT(".\\AUDIO\\SE\\se_gari02.mp3")
+#define SE_WAZA1_PATH	TEXT(".\\AUDIO\\SE\\剣で斬る2.mp3")
+#define SE_WAZA2_PATH	TEXT(".\\AUDIO\\SE\\se_jakin04.mp3")
+#define SE_WAZA3_PATH	TEXT(".\\AUDIO\\SE\\パンチの風切り音（スローモーション）2.mp3")
+#define SE_WAZA4_PATH	TEXT(".\\AUDIO\\SE\\氷魔法1.mp3")
+#define SE_WAZA5_PATH	TEXT(".\\AUDIO\\SE\\雷魔法1.mp3")
+#define SE_WAZA6_PATH	TEXT(".\\AUDIO\\SE\\火炎魔法1.mp3")
+#define SE_WAZA7_PATH	TEXT(".\\AUDIO\\SE\\剣で斬る6.mp3")
+#define SE_WAZA8_PATH	TEXT(".\\AUDIO\\SE\\回復魔法1.mp3")
+#define SE_WAZA9_PATH	TEXT(".\\AUDIO\\SE\\回復魔法2.mp3")
+#define SE_WAZA10_PATH	TEXT(".\\AUDIO\\SE\\回復魔法3.mp3")
+#define SE_WAZA11_PATH	TEXT(".\\AUDIO\\SE\\回復魔法4.mp3")
+#define SE_WAZA12_PATH	TEXT(".\\AUDIO\\SE\\HP吸収魔法2.mp3")
+#define SE_WAZA13_PATH	TEXT(".\\AUDIO\\SE\\ビームガン.mp3")
+#define SE_WAZA14_PATH	TEXT(".\\AUDIO\\SE\\聖魔法.mp3")
+
+#define SE_DRAGON_PATH	TEXT(".\\AUDIO\\SE\\ドラゴンの鳴き声2.mp3")
+#define SE_SLIME_PATH	TEXT(".\\AUDIO\\SE\\スライムの攻撃.mp3")
+#define SE_PLAYER_PATH	TEXT(".\\AUDIO\\SE\\PLAYER\\「さあ、いくぞ！」.mp3")
 
 //関数形式マクロ
 #define GetVolume(volume)	(255 * volume / 100)					//ボリュームの計算式
@@ -67,6 +87,12 @@ extern AUDIO EndOverBGM;	//エンドオーバーのBGM
 extern AUDIO sampleSE;		//サンプルSE
 extern AUDIO selectSE;			//選択SE
 extern AUDIO selectEnterSE;		//選択SE
+
+extern AUDIO dragonSE;	//ドラゴンの鳴き声
+extern AUDIO slimeSE;	//スライムの鳴き声
+extern AUDIO playerSE;	//プレイヤの鳴き声
+
+extern AUDIO wazaSE[WAZA_EFFECT_MAX];	//技のエフェクトのSE
 
 //########## プロトタイプ宣言 ##########
 //※extern は、外部に関数がありますよ！という目印でつけています。

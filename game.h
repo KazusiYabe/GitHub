@@ -31,6 +31,8 @@
 #define GAME_WINDOW_NAME	"HAMAMI-SlimeQuest-"	//ウィンドウのタイトル
 #define GAME_ICON_ID		333		//ウィンドウアイコンのID
 
+#define WAZA_EFFECT_MAX	15		//技のエフェクトの数
+
 //########## 列挙型 ##########
 enum GAME_SCENE {
 	GAME_SCENE_TITLE,

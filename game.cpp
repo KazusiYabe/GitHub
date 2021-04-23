@@ -30,6 +30,8 @@ struct CHARACTOR_DATA
 	float ATK = 1.0;	//攻撃力
 	int MP = 0;			//ＭＰ
 	int MPMAX = 0;		//ＭＰ(MAX)
+	AUDIO nakigoe;		//鳴き声
+	BOOL IsPlayNakigoe = FALSE;	//声を出したか？
 };//モンスターのデータ
 
 struct WAZA_RECORD
@@ -41,6 +43,7 @@ struct WAZA_RECORD
 	int HealHP = -1;	//HP回復量
 	int HealMP = -1;	//MP回復量
 	DIVIMAGE effect;	//エフェクトの絵
+	AUDIO SE;			//技の音
 };	//技レコード用
 
 enum COMMAND
@@ -144,12 +147,12 @@ BOOL IsPlayerTurn = FALSE;	//プレイヤーのターンか？
 
 VOID DrawPushEnter(VOID);		//PUSH ENTERを描画
 VOID DrawPlayerStatus(VOID);	//プレイヤーのステータスを描画
-WAZA_RECORD SetWazaRecord(int no, const char* Name, int ATK, int MP, int HealHP, int HealMP, DIVIMAGE effect);	//技レコード設定
+WAZA_RECORD SetWazaRecord(int no, const char* Name, int ATK, int MP, int HealHP, int HealMP, DIVIMAGE effect, AUDIO se);	//技レコード設定
 
 //########## ゲーム処理の関数 ##########
 
 //技レコード設定
-WAZA_RECORD SetWazaRecord(int no, const char* Name, int ATK, int MP, int HealHP, int HealMP, DIVIMAGE effect)
+WAZA_RECORD SetWazaRecord(int no, const char* Name, int ATK, int MP, int HealHP, int HealMP, DIVIMAGE effect, AUDIO se)
 {
 	WAZA_RECORD waza;
 	waza.No = no;
@@ -159,6 +162,7 @@ WAZA_RECORD SetWazaRecord(int no, const char* Name, int ATK, int MP, int HealHP,
 	waza.HealHP = HealHP;
 	waza.HealMP = HealMP;
 	waza.effect = effect;
+	waza.SE = se;
 
 	return waza;	//設定した技を入れる
 }
@@ -190,6 +194,8 @@ VOID MY_TITLE_INIT(VOID)
 	dragonData.ATK = 3.0;
 	dragonData.MPMAX = 50;
 	dragonData.MP = dragonData.MPMAX;
+	dragonData.nakigoe = dragonSE;
+	dragonData.IsPlayNakigoe = FALSE;
 
 	//スライム
 	strcpy_sDx(slimeData.Name, STR_MAX, "ハマミースライム");
@@ -198,26 +204,30 @@ VOID MY_TITLE_INIT(VOID)
 	slimeData.ATK = 1.0;
 	slimeData.MPMAX = 5;
 	slimeData.MP = slimeData.MPMAX;
+	slimeData.nakigoe = slimeSE;
+	slimeData.IsPlayNakigoe = FALSE;
 
-//プレイヤー
-strcpy_sDx(playerData.Name, STR_MAX, "冒険者ブレイブ");
-playerData.HPMAX = 20;
-playerData.HP = playerData.HPMAX;
-playerData.ATK = 1.0;
-playerData.MPMAX = 20;
-playerData.MP = playerData.MPMAX;
+	//プレイヤー
+	strcpy_sDx(playerData.Name, STR_MAX, "冒険者ブレイブ");
+	playerData.HPMAX = 20;
+	playerData.HP = playerData.HPMAX;
+	playerData.ATK = 1.0;
+	playerData.MPMAX = 20;
+	playerData.MP = playerData.MPMAX;
+	playerData.nakigoe = playerSE;
+	playerData.IsPlayNakigoe = FALSE;
 
 	//＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊
 
 //敵のデータを固定
 //スライム：slimeData
 //ドラゴン：dragonData
-tekiData = slimeData;
+	tekiData = slimeData;
 
-//敵の画像を設定
-//スライム：slimeImage
-//ドラゴン：dragonImage
-tekiImage = dragonImage;
+	//敵の画像を設定
+	//スライム：slimeImage
+	//ドラゴン：dragonImage
+	tekiImage = slimeImage;
 
 	//＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊
 
@@ -253,23 +263,25 @@ tekiImage = dragonImage;
 	encMoveFlg = FALSE;
 
 	//技を設定
-	wazaTable[0] = SetWazaRecord(0, "ヒッカキ", 1, 0, 0, 0, effectImage[0]);
-	wazaTable[1] = SetWazaRecord(1, "キリツケ", 1, 0, 0, 0, effectImage[1]);
-	wazaTable[2] = SetWazaRecord(2, "ハサミ", 2, 0, 0, 0, effectImage[2]);
-	wazaTable[3] = SetWazaRecord(3, "スラッシュ", 3, 0, 0, 0, effectImage[3]);
-	wazaTable[4] = SetWazaRecord(4, "アイシクル", 5, 10, 0, 0, effectImage[4]);
-	wazaTable[5] = SetWazaRecord(5, "雷撃", 5, 10, 0, 0, effectImage[5]);
-	wazaTable[6] = SetWazaRecord(6, "カエンビーーム", 20, 20, 0, 0, effectImage[6]);
-	wazaTable[7] = SetWazaRecord(7, "トリプルソード", 30, 30, 0, 0, effectImage[7]);
-	wazaTable[8] = SetWazaRecord(8, "いやしの風", 0, 5, 5, 0, effectImage[8]);
-	wazaTable[9] = SetWazaRecord(9, "天使の輪", 0, 5, 0, 5, effectImage[9]);
-	wazaTable[10] = SetWazaRecord(10, "アースヒール", 0, 30, 30, 30, effectImage[10]);
-	wazaTable[11] = SetWazaRecord(11, "聖なる光", 0, 50, 100, 100, effectImage[11]);
+	wazaTable[0] = SetWazaRecord(0, "ヒッカキ", 1, 0, 0, 0, effectImage[0], wazaSE[0]);
+	wazaTable[1] = SetWazaRecord(1, "キリツケ", 1, 0, 0, 0, effectImage[1], wazaSE[1]);
+	wazaTable[2] = SetWazaRecord(2, "ハサミ", 2, 0, 0, 0, effectImage[2], wazaSE[2]);
+	wazaTable[3] = SetWazaRecord(3, "スラッシュ", 3, 0, 0, 0, effectImage[3], wazaSE[3]);
+
+	wazaTable[4] = SetWazaRecord(4, "アイシクル", 5, 10, 0, 0, effectImage[4], wazaSE[4]);
+	wazaTable[5] = SetWazaRecord(5, "雷撃", 5, 10, 0, 0, effectImage[5], wazaSE[5]);
+	wazaTable[6] = SetWazaRecord(6, "カエンビーーム", 20, 20, 0, 0, effectImage[6], wazaSE[6]);
+	wazaTable[7] = SetWazaRecord(7, "トリプルソード", 30, 30, 0, 0, effectImage[7], wazaSE[7]);
+
+	wazaTable[8] = SetWazaRecord(8, "いやしの風", 0, 0, 5, 0, effectImage[8], wazaSE[8]);
+	wazaTable[9] = SetWazaRecord(9, "天使の輪", 0, 0, 0, 5, effectImage[9], wazaSE[9]);
+	wazaTable[10] = SetWazaRecord(10, "アースヒール", 0, 20, 40, 10, effectImage[10], wazaSE[10]);
+	wazaTable[11] = SetWazaRecord(11, "聖なる光", 0, 40, 60, 60, effectImage[11], wazaSE[11]);
 
 	//敵の技を設定
-	TekiwazaTable[0] = SetWazaRecord(0, "スプラッシュアタック", 2, 0, 0, 0, effectImage[12]);
-	TekiwazaTable[1] = SetWazaRecord(0, "マジカルビーム", 4, 0, 0, 0, effectImage[13]);
-	TekiwazaTable[2] = SetWazaRecord(0, "キュアー", 0, 7, 7, 0, effectImage[14]);
+	TekiwazaTable[0] = SetWazaRecord(0, "スプラッシュアタック", 2, 0, 0, 0, effectImage[12], wazaSE[12]);
+	TekiwazaTable[1] = SetWazaRecord(0, "マジカルビーム", 4, 0, 0, 0, effectImage[13], wazaSE[13]);
+	TekiwazaTable[2] = SetWazaRecord(0, "キュアー", 0, 7, 7, 7, effectImage[14], wazaSE[14]);
 
 	GameScene = GAME_SCENE_TITLE;	//ゲームシーンはタイトル画面から
 
@@ -312,6 +324,13 @@ VOID MY_TITLE_PROC(VOID)
 	//エンターキーでシーン遷移
 	if (MY_KEY_CLICK(KEY_INPUT_RETURN) == TRUE)
 	{
+		//プレイヤーボイス
+		if (playerData.IsPlayNakigoe == FALSE)
+		{
+			PlayAudio(playerData.nakigoe);
+			playerData.IsPlayNakigoe = TRUE;
+		}
+
 		IsSlimeWin = FALSE;	//スライム勝敗初期化
 
 		GameScene = GAME_SCENE_PLAY;	//プレイ画面へ
@@ -369,6 +388,11 @@ VOID MY_PLAY_PROC(VOID)
 			//敵が横に移動したら
 			if (encMoveFlg == TRUE)
 			{
+				if (tekiData.IsPlayNakigoe == FALSE)
+				{
+					PlayAudio(tekiData.nakigoe);
+					tekiData.IsPlayNakigoe = TRUE;
+				}
 				if (MY_KEY_CLICK(KEY_INPUT_RETURN) == TRUE)
 				{
 					PlayAudio(selectSE);
@@ -461,7 +485,6 @@ VOID MY_PLAY_PROC(VOID)
 				EffectEndFlg = FALSE;	//エフェクト描画未処理
 				NowCommand = process;	//次のコマンドへ
 				processCnt = 0;
-
 			}
 
 			break;
@@ -472,7 +495,7 @@ VOID MY_PLAY_PROC(VOID)
 			if (IsNotEnoughMP == TRUE)
 			{
 				EffectEndFlg = FALSE;
-				if (MY_KEY_CLICK(KEY_INPUT_BACK) == TRUE)
+				if (MY_KEY_CLICK(KEY_INPUT_RETURN) == TRUE)
 				{
 					PlayAudio(selectSE);
 					NowCommand = waza;		//前のコマンドへ
@@ -485,11 +508,17 @@ VOID MY_PLAY_PROC(VOID)
 			if (IsNotEnoughMP == FALSE)
 			{
 				//自動で次のコマンドへ
-				if (processCnt < processCntMAX) { processCnt++; }
-				else
+				if (ProcCmdFlg == FALSE)
 				{
-					ProcCmdFlg = TRUE;		//コマンド描画終了
-					wazaTable[wazaNo].effect.IsDraw = TRUE;	//エフェクト描画
+					if (processCnt < processCntMAX) { processCnt++; }
+					else
+					{
+						//技のSE
+						PlayAudio(wazaTable[wazaNo].SE);
+
+						ProcCmdFlg = TRUE;		//コマンド描画終了
+						wazaTable[wazaNo].effect.IsDraw = TRUE;	//エフェクト描画
+					}
 				}
 			}
 
@@ -517,6 +546,8 @@ VOID MY_PLAY_PROC(VOID)
 				{
 					playerData.HP += wazaTable[wazaNo].HealHP;	//HPを増やす
 					if (playerData.HP > playerData.HPMAX) { playerData.HP = playerData.HPMAX; }
+					playerData.MP -= wazaTable[wazaNo].MP;	//MPを減らす
+					if (playerData.MP < 0) { playerData.MP = 0; }
 					playerData.MP += wazaTable[wazaNo].HealMP;	//MPを増やす
 					if (playerData.MP > playerData.MPMAX) { playerData.MP = playerData.MPMAX; }
 				}
@@ -595,11 +626,17 @@ VOID MY_PLAY_PROC(VOID)
 		case process:
 
 			//自動で次のコマンドへ
-			if (processCnt < processCntMAX) { processCnt++; }
-			else
+			if (ProcCmdFlg == FALSE)
 			{
-				ProcCmdFlg = TRUE;		//コマンド描画終了
-				TekiwazaTable[wazaNo].effect.IsDraw = TRUE;	//エフェクト描画
+				if (processCnt < processCntMAX) { processCnt++; }
+				else
+				{
+					//技のSE
+					PlayAudio(TekiwazaTable[wazaNo].SE);
+
+					ProcCmdFlg = TRUE;		//コマンド描画終了
+					TekiwazaTable[wazaNo].effect.IsDraw = TRUE;	//エフェクト描画
+				}
 			}
 
 			//エフェクトがおわったら
@@ -629,7 +666,7 @@ VOID MY_PLAY_PROC(VOID)
 					tekiData.HP += TekiwazaTable[wazaNo].HealHP;	//HPを増やす
 					if (tekiData.HP > tekiData.HPMAX) { tekiData.HP = tekiData.HPMAX; }
 					tekiData.MP += TekiwazaTable[wazaNo].HealMP;	//MPを増やす
-					if (tekiData.MP> tekiData.MPMAX) { tekiData.MP = tekiData.MPMAX; }
+					if (tekiData.MP > tekiData.MPMAX) { tekiData.MP = tekiData.MPMAX; }
 				}
 				damageProcFlg = TRUE;
 			}
@@ -659,11 +696,12 @@ VOID MY_PLAY_PROC(VOID)
 				//コマンドを入力に戻す
 				NowCommand = input;
 
-				//プレイヤーのターンエンド！
-				IsPlayerTurn = FALSE;
+				//バトルコマンドをアタックにする
+				buttleCmd = attack;
 
 				//プレイヤーのターンにする
 				IsPlayerTurn = TRUE;
+
 			}
 			break;
 		}
@@ -713,13 +751,13 @@ VOID MY_PLAY_DRAW(VOID)
 {
 
 	//＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊
-	
+
 //プレイ背景を描画（場所は選べる４タイプ！）
 //草　原 ：playkusaImage
 //ﾀﾞﾝｼﾞｮﾝ：playdanjonImage
 //川　岸 ：playkawaImage
 //ボス戦 ：playbossImage
-DrawImage(playkawaImage);
+	DrawImage(playkawaImage);
 
 	//＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊
 
@@ -846,7 +884,9 @@ DrawImage(playkawaImage);
 				//エフェクトを描画しても良いとき
 				if (ProcCmdFlg == TRUE)
 				{
+					//エフェクトの描画
 					DrawDivImage(&wazaTable[wazaNo].effect);
+
 					if (wazaTable[wazaNo].effect.IsDraw == FALSE)
 					{
 						EffectEndFlg = TRUE;	//エフェクト描画終了
@@ -947,7 +987,7 @@ DrawImage(playkawaImage);
 			}
 			else if (buttleCmd == recovery)
 			{
-				sprintfDx(ProcText, "%sは HP%3d / MP%3d 回復した", tekiData.Name, TekiwazaTable[wazaNo].HealHP, TekiwazaTable[wazaNo].HealMP);
+				sprintfDx(ProcText, "%sは HP%3d / MP%3d 回復した", tekiData.Name, TekiwazaTable[wazaNo].HealHP, TekiwazaTable[wazaNo].HealMP );	
 			}
 			DrawFormatStringToHandle(messageImage.pos.x + 10, messageImage.pos.y + 50, GetColor(255, 255, 255), fontCommand.handle, ProcText);
 

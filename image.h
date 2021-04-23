@@ -49,10 +49,8 @@
 
 #define IMAGE_DIV_MAX				256			//ハンドルの最大数(任意)
 
-#define EFFECT_MAX	15
-
 #define IMAGE_WAZA0_DIV_PATH		TEXT(".\\IMAGE\\EFFECT\\hikkaku.png")	
-#define IMAGE_WAZA1_DIV_PATH		TEXT(".\\IMAGE\\EFFECT\\slash.png")
+#define IMAGE_WAZA1_DIV_PATH		TEXT(".\\IMAGE\\EFFECT\\pipo-btleffect088.png")
 #define IMAGE_WAZA2_DIV_PATH		TEXT(".\\IMAGE\\EFFECT\\kamituku.png")	
 #define IMAGE_WAZA3_DIV_PATH		TEXT(".\\IMAGE\\EFFECT\\slash2.png")	
 
@@ -137,7 +135,7 @@ extern IMAGE titleLogo;			//タイトルロゴ画像
 extern IMAGE wakuImage;			//モンスター枠画像
 extern IMAGE messageImage;			//メッセージ枠画像
 
-extern DIVIMAGE effectImage[EFFECT_MAX];	//エフェクト分割画像
+extern DIVIMAGE effectImage[WAZA_EFFECT_MAX];	//エフェクト分割画像
 
 //########## プロトタイプ宣言 ##########
 //※extern は、外部に関数がありますよ！という目印でつけています。
@@ -147,7 +145,7 @@ extern BOOL MY_IMAGE_LOAD_FILE(IMAGE* image, const char* path, int x, int y, BOO
 
 extern BOOL MY_IMAGE_LOAD_DIV_FILE(
 	DIVIMAGE* image, const char* path,
-	int retu, int gyo, int width, int height,
+	int retu, int gyo,
 	int x, int y, BOOL IsCenter, RECT margin);	//画像を分割して読み込み
 
 extern VOID ImageCollUpdate(POSTION* pos);	//画像の当たり判定の位置を更新する

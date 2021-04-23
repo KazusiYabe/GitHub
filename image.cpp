@@ -34,7 +34,7 @@ IMAGE titleLogo;			//タイトルロゴ画像
 IMAGE wakuImage;			//モンスター枠画像
 IMAGE messageImage;				//メッセージ枠画像
 
-DIVIMAGE effectImage[EFFECT_MAX];	//エフェクト分割画像
+DIVIMAGE effectImage[WAZA_EFFECT_MAX];	//エフェクト分割画像
 
 //########## 関数 ##########
 
@@ -82,7 +82,7 @@ BOOL MY_IMAGE_LOAD(VOID)
 	//エフェクト画像の読み込み
 	if (MY_IMAGE_LOAD_DIV_FILE(
 		&effectImage[0], IMAGE_WAZA0_DIV_PATH,
-		5, 2, (2400 / 5), (960 / 2),	//画像によって数値を変更すること
+		5, 2,	//画像によって数値を変更すること
 		GAME_WIDTH / 2, GAME_HEIGHT / 2, TRUE, GetRect(0, 0, 0, 0)) == FALSE) {
 		return FALSE;
 	}
@@ -90,7 +90,7 @@ BOOL MY_IMAGE_LOAD(VOID)
 	//エフェクト画像の読み込み
 	if (MY_IMAGE_LOAD_DIV_FILE(
 		&effectImage[1], IMAGE_WAZA1_DIV_PATH,
-		5, 2, (3200 / 5), (960 / 2),	//画像によって数値を変更すること
+		9, 1,	//画像によって数値を変更すること
 		GAME_WIDTH / 2, GAME_HEIGHT / 2, TRUE, GetRect(0, 0, 0, 0)) == FALSE) {
 		return FALSE;
 	}
@@ -98,7 +98,7 @@ BOOL MY_IMAGE_LOAD(VOID)
 	//エフェクト画像の読み込み
 	if (MY_IMAGE_LOAD_DIV_FILE(
 		&effectImage[2], IMAGE_WAZA2_DIV_PATH,
-		5, 2, (2400 / 5), (960 / 2),	//画像によって数値を変更すること
+		5, 2, 	//画像によって数値を変更すること
 		GAME_WIDTH / 2, GAME_HEIGHT / 2, TRUE, GetRect(0, 0, 0, 0)) == FALSE) {
 		return FALSE;
 	}
@@ -106,7 +106,7 @@ BOOL MY_IMAGE_LOAD(VOID)
 	//エフェクト画像の読み込み
 	if (MY_IMAGE_LOAD_DIV_FILE(
 		&effectImage[3], IMAGE_WAZA3_DIV_PATH,
-		5, 2, (6400 / 5), (1920 / 2),	//画像によって数値を変更すること
+		5, 2,	//画像によって数値を変更すること
 		GAME_WIDTH / 2, GAME_HEIGHT / 2, TRUE, GetRect(0, 0, 0, 0)) == FALSE) {
 		return FALSE;
 	}
@@ -114,7 +114,7 @@ BOOL MY_IMAGE_LOAD(VOID)
 	//エフェクト画像の読み込み
 	if (MY_IMAGE_LOAD_DIV_FILE(
 		&effectImage[4], IMAGE_WAZA4_DIV_PATH,
-		5, 2, (2000 / 5), (800 / 2),	//画像によって数値を変更すること
+		5, 2, //画像によって数値を変更すること
 		GAME_WIDTH / 2, GAME_HEIGHT / 2, TRUE, GetRect(0, 0, 0, 0)) == FALSE) {
 		return FALSE;
 	}
@@ -122,7 +122,7 @@ BOOL MY_IMAGE_LOAD(VOID)
 	//エフェクト画像の読み込み
 	if (MY_IMAGE_LOAD_DIV_FILE(
 		&effectImage[5], IMAGE_WAZA5_DIV_PATH,
-		5, 2, (2000 / 5), (800 / 2),	//画像によって数値を変更すること
+		5, 2, 	//画像によって数値を変更すること
 		GAME_WIDTH / 2, GAME_HEIGHT / 2, TRUE, GetRect(0, 0, 0, 0)) == FALSE) {
 		return FALSE;
 	}
@@ -130,7 +130,7 @@ BOOL MY_IMAGE_LOAD(VOID)
 	//エフェクト画像の読み込み
 	if (MY_IMAGE_LOAD_DIV_FILE(
 		&effectImage[6], IMAGE_WAZA6_DIV_PATH,
-		2, 10, (1280 / 2), (4800 / 10),	//画像によって数値を変更すること
+		2, 10, //画像によって数値を変更すること
 		GAME_WIDTH / 2, GAME_HEIGHT / 2, TRUE, GetRect(0, 0, 0, 0)) == FALSE) {
 		return FALSE;
 	}
@@ -138,7 +138,7 @@ BOOL MY_IMAGE_LOAD(VOID)
 	//エフェクト画像の読み込み
 	if (MY_IMAGE_LOAD_DIV_FILE(
 		&effectImage[7], IMAGE_WAZA7_DIV_PATH,
-		1, 16, (640 / 1), (7680 / 16),	//画像によって数値を変更すること
+		1, 16,	//画像によって数値を変更すること
 		GAME_WIDTH / 2, GAME_HEIGHT / 2, TRUE, GetRect(0, 0, 0, 0)) == FALSE) {
 		return FALSE;
 	}
@@ -146,7 +146,7 @@ BOOL MY_IMAGE_LOAD(VOID)
 	//エフェクト画像の読み込み
 	if (MY_IMAGE_LOAD_DIV_FILE(
 		&effectImage[8], IMAGE_WAZA8_DIV_PATH,
-		9, 1, (2160 / 9), (240 / 1),	//画像によって数値を変更すること
+		9, 1, 	//画像によって数値を変更すること
 		GAME_WIDTH / 2, GAME_HEIGHT / 2, TRUE, GetRect(0, 0, 0, 0)) == FALSE) {
 		return FALSE;
 	}
@@ -154,7 +154,7 @@ BOOL MY_IMAGE_LOAD(VOID)
 	//エフェクト画像の読み込み
 	if (MY_IMAGE_LOAD_DIV_FILE(
 		&effectImage[9], IMAGE_WAZA9_DIV_PATH,
-		9, 1, (2160 / 9), (240 / 1),	//画像によって数値を変更すること
+		10, 1, 	//画像によって数値を変更すること
 		GAME_WIDTH / 2, GAME_HEIGHT / 2, TRUE, GetRect(0, 0, 0, 0)) == FALSE) {
 		return FALSE;
 	}
@@ -162,7 +162,7 @@ BOOL MY_IMAGE_LOAD(VOID)
 	//エフェクト画像の読み込み
 	if (MY_IMAGE_LOAD_DIV_FILE(
 		&effectImage[10], IMAGE_WAZA10_DIV_PATH,
-		9, 1, (2160 / 9), (240 / 1),	//画像によって数値を変更すること
+		10, 1,	//画像によって数値を変更すること
 		GAME_WIDTH / 2, GAME_HEIGHT / 2, TRUE, GetRect(0, 0, 0, 0)) == FALSE) {
 		return FALSE;
 	}
@@ -170,7 +170,7 @@ BOOL MY_IMAGE_LOAD(VOID)
 	//エフェクト画像の読み込み
 	if (MY_IMAGE_LOAD_DIV_FILE(
 		&effectImage[11], IMAGE_WAZA11_DIV_PATH,
-		5, 2, (1920 / 5), (768 / 2),	//画像によって数値を変更すること
+		5, 2,	//画像によって数値を変更すること
 		GAME_WIDTH / 2, GAME_HEIGHT / 2, TRUE, GetRect(0, 0, 0, 0)) == FALSE) {
 		return FALSE;
 	}
@@ -178,7 +178,7 @@ BOOL MY_IMAGE_LOAD(VOID)
 	//エフェクト画像の読み込み
 	if (MY_IMAGE_LOAD_DIV_FILE(
 		&effectImage[12], IMAGE_WAZA12_DIV_PATH,
-		1, 15, (640 / 1), (7200 / 15),	//画像によって数値を変更すること
+		1, 15, //画像によって数値を変更すること
 		GAME_WIDTH / 2, GAME_HEIGHT / 2, TRUE, GetRect(0, 0, 0, 0)) == FALSE) {
 		return FALSE;
 	}
@@ -186,7 +186,7 @@ BOOL MY_IMAGE_LOAD(VOID)
 	//エフェクト画像の読み込み
 	if (MY_IMAGE_LOAD_DIV_FILE(
 		&effectImage[13], IMAGE_WAZA13_DIV_PATH,
-		3, 10, (1920 / 3), (4800 / 10),	//画像によって数値を変更すること
+		3, 10,	//画像によって数値を変更すること
 		GAME_WIDTH / 2, GAME_HEIGHT / 2, TRUE, GetRect(0, 0, 0, 0)) == FALSE) {
 		return FALSE;
 	}
@@ -194,7 +194,7 @@ BOOL MY_IMAGE_LOAD(VOID)
 	//エフェクト画像の読み込み
 	if (MY_IMAGE_LOAD_DIV_FILE(
 		&effectImage[14], IMAGE_WAZA14_DIV_PATH,
-		5, 4, (4800 / 5), (2880 / 4),	//画像によって数値を変更すること
+		5, 4,	//画像によって数値を変更すること
 		GAME_WIDTH / 2, GAME_HEIGHT / 2, TRUE, GetRect(0, 0, 0, 0)) == FALSE) {
 		return FALSE;
 	}
@@ -265,19 +265,28 @@ BOOL MY_IMAGE_LOAD_FILE(IMAGE* image, const char* path, int x, int y, BOOL IsCen
 /// 
 /// <param name = "retu">列の分割数</param>
 /// <param name = "gyo">行の分割数</param>
-/// <param name = "width">画像の分割の幅</param>
-/// <param name = "height">画像の分割の高さ</param>
 /// 
 /// <param name = "IsCenter">画像をXYの中心に描画したいときはTRUEにする</param>
 /// <param name = "margin">画像の当たり判定の余白（当たり判定を狭めたりするときに使おう！）デフォルトはナシ！</param>
 /// <returns>読み込めたらTRUE/読み込めなかったらFALSE</returns>
 BOOL MY_IMAGE_LOAD_DIV_FILE(
 	DIVIMAGE* image, const char* path,
-	int retu, int gyo, int width, int height,
+	int retu, int gyo,
 	int x, int y, BOOL IsCenter, RECT margin)
 {
-	//サンプル画像の読み込み
-	LoadDivGraph(path, (retu * gyo), retu, gyo, width, height, &image->handle[0]);
+	//画像全体のサイズを取得
+	int width = 0;
+	int height = 0;
+
+	//一時的に画像をすべて読み込む
+	image->handle[0] = LoadGraph(path);
+	//画像サイズを取得
+	GetGraphSize(image->handle[0], &width, &height);
+	//画像を破棄
+	DeleteGraph(image->handle[0]);
+
+	//分割画像の読み込み
+	LoadDivGraph(path, (retu * gyo), retu, gyo, width / retu, height / gyo, &image->handle[0]);
 
 	image->DivMax = retu * gyo;	//実際に読み込んだ数をMAX値に設定
 
@@ -426,7 +435,7 @@ VOID MY_IMAGE_DELETE(VOID)
 	DeleteGraph(wakuImage.handle);
 	DeleteGraph(messageImage.handle);
 
-	for (int cnt = 0; cnt < EFFECT_MAX; cnt++)
+	for (int cnt = 0; cnt < WAZA_EFFECT_MAX; cnt++)
 	{
 		for (int i = 0; i < effectImage[cnt].DivMax; i++) { DeleteGraph(effectImage[0].handle[i]); };
 	}
