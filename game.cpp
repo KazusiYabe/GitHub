@@ -227,7 +227,7 @@ VOID MY_TITLE_INIT(VOID)
 	//敵の画像を設定
 	//スライム：slimeImage
 	//ドラゴン：dragonImage
-	tekiImage = slimeImage;
+	tekiImage = dragonImage;
 
 	//＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊
 
