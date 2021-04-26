@@ -263,7 +263,7 @@ VOID MY_TITLE_INIT(VOID)
 	encMoveFlg = FALSE;
 
 	//技を設定
-	wazaTable[0] = SetWazaRecord(0, "ヒッカキ", 1, 0, 0, 0, effectImage[0], wazaSE[0]);
+	wazaTable[0] = SetWazaRecord(0, "ヒッカク", 100, 0, 0, 0, effectImage[0], wazaSE[0]);
 	wazaTable[1] = SetWazaRecord(1, "キリツケ", 1, 0, 0, 0, effectImage[1], wazaSE[1]);
 	wazaTable[2] = SetWazaRecord(2, "ハサミ", 2, 0, 0, 0, effectImage[2], wazaSE[2]);
 	wazaTable[3] = SetWazaRecord(3, "スラッシュ", 3, 0, 0, 0, effectImage[3], wazaSE[3]);
