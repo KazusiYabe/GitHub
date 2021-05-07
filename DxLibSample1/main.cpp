@@ -84,23 +84,25 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 		Y += YSpeed;
 
-		if (X - radius < 0 || X+ width > GAME_WIDTH)
+		if (X - radius < 0 || X+ radius > GAME_WIDTH)
 		{
 			XSpeed = -XSpeed;//ˆÚ“®‚·‚éŒü‚«‚ð”½“]
 
 			if (XSpeed > 0) {XSpeed += 2; }
 			else if (XSpeed < 0) { XSpeed -= 2; }
 		}
+
+
+		if (Y - radius < 0 || Y + radius > GAME_HEIGHT)
+
+		{
+			YSpeed = -YSpeed;//ˆÚ“®‚·‚éŒü‚«‚ð”½“]
+
+			if (YSpeed > 0) { YSpeed += 2; }
+			else if (YSpeed < 0) { YSpeed -= 2; }
+		}
+
 		ScreenFlip();
-	}
-
-	if (Y - radius < 0 || Y + height > GAME_HEIGHT)
-	
-	{
-		YSpeed = -YSpeed;//ˆÚ“®‚·‚éŒü‚«‚ð”½“]
-
-		if (YSpeed > 0) { YSpeed += 2; }
-		else if (YSpeed < 0) { YSpeed -= 2; }
 	}
 
 	DxLib_End();				// ‚c‚wƒ‰ƒCƒuƒ‰ƒŠŽg—p‚ÌI—¹ˆ—
