@@ -31,76 +31,20 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	{
 		return -1;			// エラーが起きたら直ちに終了
 	}
-	//四角の位置を決める
-	int X = GAME_WIDTH / 2;
-	int Y = GAME_HEIGHT / 2;
-
-	//四角の大きさを決める
-	int width = 32;
-	int height = 32;
-
-	int radius = 100;
-
-	int Speed = 5;
-	int XSpeed = Speed;
-	int YSpeed = Speed;
+	
 	SetDrawScreen(DX_SCREEN_BACK);
 
 	//無限ループ
 	while (1)
 	{
-		if (CheckHitKeyAll() != 0)
-		{
-			break;  //無限ループを抜ける
-		}
+		
 
 		//メッセージを受け取り続ける
-		if (ProcessMessage() != 0)
-		{
-			break;  //無限ループを抜ける
-		}
+		if (ProcessMessage() != 0){break;  //無限ループを抜ける}
+		if (ClearDrawScreen() != 0) { break; }  //画面を消去する
 
 
-		//画面を消去する
-		if (ClearDrawScreen() != 0) { break; }
-
-
-		//四角を描画
-		//DrawBox(
-		//	X, Y, X + width, Y + height,
-		//	GetColor(255, 0, 0),   //色を取得
-		//	TRUE                   //塗りつぶし?
-		//);
-
-
-		//円を描画
-		DrawCircle(
-			X, Y,  radius,
-			GetColor(0, 255, 0),
-			FALSE, 5
-		);
-
-		X += XSpeed;
-
-		Y += YSpeed;
-
-		if (X - radius < 0 || X+ radius > GAME_WIDTH)
-		{
-			XSpeed = -XSpeed;//移動する向きを反転
-
-			if (XSpeed > 0) {XSpeed += 2; }
-			else if (XSpeed < 0) { XSpeed -= 2; }
-		}
-
-
-		if (Y - radius < 0 || Y + radius > GAME_HEIGHT)
-
-		{
-			YSpeed = -YSpeed;//移動する向きを反転
-
-			if (YSpeed > 0) { YSpeed += 2; }
-			else if (YSpeed < 0) { YSpeed -= 2; }
-		}
+		
 
 		ScreenFlip();
 	}
