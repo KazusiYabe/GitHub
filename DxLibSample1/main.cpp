@@ -1,6 +1,7 @@
 //ヘッダーファイルの読み込み
 #include "DxLib.h"  //DxLibを使う時は必要
 
+#include "keyboard.h"
 //マクロ定義
 #define GAME_TITLE "ゲームタイトル"
 #define GAME_WIDTH 1280
@@ -37,14 +38,32 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	//無限ループ
 	while (1)
 	{
-		
-
 		//メッセージを受け取り続ける
 		if (ProcessMessage() != 0){break;  //無限ループを抜ける}
 		if (ClearDrawScreen() != 0) { break; }  //画面を消去する
 
-
+		//キーボード入力の更新
+		AllKeyUpdate();
 		
+		//キー入力
+		if (KeyDown(KEY_INPUT_UP) == TRUE)
+		{
+			Y--;  //上に移動
+		}
+		if (KeyDown(KEY_INPUT_DOWN) == TRUE)
+		{
+			Y++;  //下に移動
+		}
+		if (KeyDown(KEY_INPUT_LEFT) == TRUE)
+		{
+			X--;  //左に移動
+		}
+		if (KeyDown(KEY_INPUT_RIGHT) == TRUE)
+		{
+			X++;  //右に移動
+		}
+
+		DrawCircle(X, Y, radius, GetColor(255, 255, 0), TRUE);
 
 		ScreenFlip();
 	}

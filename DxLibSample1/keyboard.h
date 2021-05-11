@@ -21,7 +21,7 @@ struct KEYBOARD
 extern KEYBOARD keyboard;
 
 //プロトタイプ宣言
-extern void AllKeyDownUpdate(void);
+extern void AllKeyUpdate(void);
 extern BOOL KeyDown(int KEY_INPUT_);
 extern BOOL KeyUp(int KEY_INPUT_);
 extern BOOL KeyClick(int KEY_INPUT_);
