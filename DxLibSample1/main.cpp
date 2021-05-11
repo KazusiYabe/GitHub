@@ -35,6 +35,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	
 	SetDrawScreen(DX_SCREEN_BACK);
 
+	//â~ÇÃíÜêS
+	int X = GAME_WIDTH / 2;
+	int Y = GAME_HEIGHT / 2;
+	//â~ÇÃîºåa
+	int radius = 50;
 	//ñ≥å¿ÉãÅ[Év
 	while (1)
 	{
